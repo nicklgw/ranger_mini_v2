@@ -26,7 +26,7 @@ def generate_launch_description():
     declared_arguments = []
     declared_arguments.append(
         DeclareLaunchArgument(
-            "description_package",
+            "ranger_mini_v2_package",
             default_value="ranger_mini_v2",
             description="Description package with robot URDF/xacro files. Usually the argument \
         is not set, it enables use of a custom description.",
@@ -58,7 +58,7 @@ def generate_launch_description():
     )
 
     # Initialize Arguments
-    description_package = LaunchConfiguration("description_package")
+    ranger_mini_v2_package = LaunchConfiguration("ranger_mini_v2_package")
     description_file = LaunchConfiguration("description_file")
     gui = LaunchConfiguration("gui")
     prefix = LaunchConfiguration("prefix")
@@ -79,7 +79,7 @@ def generate_launch_description():
     robot_description = {"robot_description": robot_description_content}
 
     rviz_config_file = PathJoinSubstitution(
-        [FindPackageShare(description_package), "rviz", "display.rviz"]
+        [FindPackageShare(ranger_mini_v2_package), "rviz", "display.rviz"]
     )
 
     joint_state_publisher_node = Node(
