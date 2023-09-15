@@ -16,6 +16,14 @@
 
     <xacro:property name="wheel_length" value="1.1653e-01" />
     <xacro:property name="wheel_radius" value="1.6459e-01" />
+    
+    <!-- Base -->
+    <link name="base_footprint"/>
+    <joint name="base_link_joint" type="fixed">
+        <origin xyz="0 0 0"/>
+        <parent link="base_footprint"/>
+        <child link="base_link"/>
+    </joint>
 
     <!-- Base link -->
     <link name="base_link">
