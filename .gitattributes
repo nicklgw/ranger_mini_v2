@@ -1,0 +1,1 @@
+src/ranger_mini_v2/meshes/ranger_base.dae filter=lfs diff=lfs merge=lfs -text
