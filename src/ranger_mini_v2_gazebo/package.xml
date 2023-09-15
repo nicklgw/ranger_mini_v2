@@ -3,36 +3,23 @@
 <package format="3">
   <name>ranger_mini_v2_gazebo</name>
   <version>0.0.0</version>
-  <description>Demo package of `ros2_control` hardware for DiffBot.</description>
-
-  <maintainer email="denis.stogl@stoglrobotics.de">Dr.-Ing. Denis Štogl</maintainer>
-  <maintainer email="bence.magyar.robotics@gmail.com">Bence Magyar</maintainer>
-  <maintainer email="christoph.froehlich@ait.ac.at">Christoph Froehlich</maintainer>
-
-  <author email="denis.stogl@stoglrobotics.de">Dr.-Ing. Denis Štogl</author>
-
-  <license>Apache-2.0</license>
+  <description>TODO: Package description</description>
+  <maintainer email="robotmania@todo.todo">robotmania</maintainer>
+  <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <depend>hardware_interface</depend>
-  <depend>pluginlib</depend>
+  <depend>gazebo_ros_pkgs</depend>
+  <depend>geometry_msgs</depend>
   <depend>rclcpp</depend>
-  <depend>rclcpp_lifecycle</depend>
-
-  <exec_depend>controller_manager</exec_depend>
-  <exec_depend>joint_state_broadcaster</exec_depend>
-  <exec_depend>joint_state_publisher_gui</exec_depend>
-  <exec_depend>robot_state_publisher</exec_depend>
-  <exec_depend>ros2_controllers_test_nodes</exec_depend>
-  <exec_depend>ros2controlcli</exec_depend>
-  <exec_depend>ros2launch</exec_depend>
-  <exec_depend>rviz2</exec_depend>
-  <exec_depend>xacro</exec_depend>
-
-  <test_depend>ament_cmake_gtest</test_depend>
+  <depend>sensor_msgs</depend>
+  <depend>tf2</depend>
 
   <export>
     <build_type>ament_cmake</build_type>
+    <gazebo_ros gazebo_model_path="${prefix}/models"/>
   </export>
 </package>
+
+<!--https://answers.gazebosim.org//question/6568/uri-paths-to-packages-in-the-sdf-model-file/-->
+

@@ -8,3 +8,7 @@ nvidia@nvidia-pc:~/ranger_mini_v2$ ros2 launch ranger_mini_v2 display.launch.py
 nvidia@nvidia-pc:~/ranger_mini_v2$ source install/setup.bash
 nvidia@nvidia-pc:~/ranger_mini_v2$ ros2 launch ranger_mini_v2_gazebo display_xacro.launch.py
 
+
+
+显示另一个四舵轮模型
+nvidia@nvidia-pc:~/ranger_mini_v2$ ros2 launch ranger_mini_v2_gazebo robot_sim.launch.py
