@@ -24,3 +24,116 @@ git lfs track “demo/*.mp4”（可以添加多个追踪配置，冒号里表�
 git add .gitattributes（运行完后当前文件夹下会生成一个.gitattributes文件，存储第二步的相关配
 git add 添加的文件
 git commit -m “describe info”
+
+
+
+    <static>0</static>
+
+    <plugin name="ranger_mini_joint_state" filename="libgazebo_ros_joint_state_publisher.so">
+      <ros>
+          <remapping>~/out:=joint_states</remapping>
+      </ros>
+      <update_rate>30</update_rate>
+      <joint_name>fl_wheel</joint_name>
+      <joint_name>fr_wheel</joint_name>
+      <joint_name>rl_wheel</joint_name>
+      <joint_name>rr_wheel</joint_name>
+      <joint_name>fl_steering_wheel</joint_name>
+      <joint_name>fr_steering_wheel</joint_name>
+      <joint_name>rl_steering_wheel</joint_name>
+      <joint_name>rr_steering_wheel</joint_name>
+    </plugin>
+
+    <ros2_control name="GazeboSystem" type="system">
+        <hardware>
+            <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+        </hardware>
+
+        <joint name="fl_wheel">
+            <command_interface name="velocity">
+            <param name="min">-3.14</param>
+            <param name="max">3.14</param>
+            </command_interface>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="fr_wheel">
+            <command_interface name="velocity">
+            <param name="min">-3.14</param>
+            <param name="max">3.14</param>
+            </command_interface>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="rl_wheel">
+            <command_interface name="velocity">
+            <param name="min">-3.14</param>
+            <param name="max">3.14</param>
+            </command_interface>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="rr_wheel">
+            <command_interface name="velocity">
+            <param name="min">-3.14</param>
+            <param name="max">3.14</param>
+            </command_interface>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="fl_steering_wheel">
+            <command_interface name="position">
+            <param name="min">-3.14</param>
+            <param name="max">3.14</param>
+            </command_interface>
+            <state_interface name="position">
+            <param name="initial_value">0</param>
+            </state_interface>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="fr_steering_wheel">
+            <command_interface name="position">
+            <param name="min">-3.14</param>
+            <param name="max">3.14</param>
+            </command_interface>
+            <state_interface name="position">
+            <param name="initial_value">0</param>
+            </state_interface>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="rl_steering_wheel">
+            <command_interface name="position">
+            <param name="min">-3.14</param>
+            <param name="max">3.14</param>
+            </command_interface>
+            <state_interface name="position">
+            <param name="initial_value">0</param>
+            </state_interface>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="rr_steering_wheel">
+            <command_interface name="position">
+            <param name="min">-3.14</param>
+            <param name="max">3.14</param>
+            </command_interface>
+            <state_interface name="position">
+            <param name="initial_value">0</param>
+            </state_interface>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+    </ros2_control>
+
+    <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+        <parameters>/home/nick/ranger_mini_v2/install/ranger_mini_v2_gazebo/share/ranger_mini_v2_gazebo/models/ranger_mini_v2/config/controllers.yaml</parameters>
+    </plugin>

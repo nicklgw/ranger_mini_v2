@@ -14,10 +14,10 @@ controller_manager:
 forward_position_controller:
   ros__parameters:
     joints:
-      - fl_steering_joint
-      - fr_steering_joint
-      - rl_steering_joint
-      - rr_steering_joint
+      - fl_steering_wheel
+      - fr_steering_wheel
+      - rl_steering_wheel
+      - rr_steering_wheel
     interface_name: position
     command_interfaces:
       - position
@@ -28,10 +28,10 @@ forward_position_controller:
 forward_velocity_controller:
   ros__parameters:
     joints:
-      - fl_wheel_joint
-      - fr_wheel_joint
-      - rl_wheel_joint
-      - rr_wheel_joint
+      - fl_wheel
+      - fr_wheel
+      - rl_wheel
+      - rr_wheel
     interface_name: velocity
     command_interfaces:
       - velocity
