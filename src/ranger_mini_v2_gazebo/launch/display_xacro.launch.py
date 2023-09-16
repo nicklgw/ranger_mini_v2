@@ -27,7 +27,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "ranger_mini_v2_package",
-            default_value="ranger_mini_v2",
+            default_value="ranger_mini_v2_gazebo",
             description="Description package with robot URDF/xacro files. Usually the argument \
         is not set, it enables use of a custom description.",
         )

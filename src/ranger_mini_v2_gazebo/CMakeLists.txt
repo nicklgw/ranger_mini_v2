@@ -17,7 +17,6 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(gazebo REQUIRED)
 find_package(gazebo_ros_pkgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -41,9 +40,26 @@ install(
   DIRECTORY
     launch
     models
-    urdf
+    rviz
+    scripts    
     worlds
     xacro
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+install(
+  PROGRAMS
+  scripts/robot_control.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(
+  DIRECTORY
+    
+    models/ 
+        
+    
+    
   DESTINATION share/${PROJECT_NAME}/
 )
 

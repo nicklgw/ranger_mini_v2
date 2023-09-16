@@ -21,12 +21,8 @@ endforeach()
 
 # INSTALL
 install(
-  DIRECTORY
-    config
-    launch
+  DIRECTORY       
     meshes
-    rviz
-    urdf
   DESTINATION share/${PROJECT_NAME}/
 )
 

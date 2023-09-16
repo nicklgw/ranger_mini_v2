@@ -5,11 +5,6 @@ nick@nick-vmware:~/ranger_mini_v2$ source install/setup.bash
 nick@nick-vmware:~/ranger_mini_v2$ ros2 launch ranger_mini_v2_gazebo display_xacro.launch.py                    # 在rviz中显示车体模型
 nick@nick-vmware:~/ranger_mini_v2$ ros2 launch ranger_mini_v2_gazebo ranger_mini_v2_empty_world.launch.py		# 在gazebo中显示车体模型
 
-
-显示另一个四舵轮模型
-nick@nick-vmware:~/ranger_mini_v2$ ros2 launch ranger_mini_v2_gazebo robot_sim.launch.py
-
-
 将xacro转为URDF
 nick@nick-vmware:~/ranger_mini_v2/src/ranger_mini_v2_gazebo/xacro$ xacro ranger_mini_gazebo.xacro > ranger_mini_gazebo.urdf
 
