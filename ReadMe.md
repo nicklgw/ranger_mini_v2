@@ -5,6 +5,9 @@ nick@nick-vmware:~/ranger_mini_v2$ source install/setup.bash
 nick@nick-vmware:~/ranger_mini_v2$ ros2 launch ranger_mini_v2_gazebo display_xacro.launch.py                    # 在rviz中显示车体模型
 nick@nick-vmware:~/ranger_mini_v2$ ros2 launch ranger_mini_v2_gazebo ranger_mini_v2_empty_world.launch.py		# 在gazebo中显示车体模型
 
+手动遥控
+nick@nick-vmware:~/ranger_mini_v2$ ros2 run teleop_twist_keyboard teleop_twist_keyboard
+
 将xacro转为URDF
 nick@nick-vmware:~/ranger_mini_v2/src/ranger_mini_v2_gazebo/xacro$ xacro ranger_mini_gazebo.xacro > ranger_mini_gazebo.urdf
 
