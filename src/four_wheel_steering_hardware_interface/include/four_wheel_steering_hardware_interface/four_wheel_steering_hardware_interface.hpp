@@ -58,6 +58,24 @@ public:
   
 private:
   
+  std::vector<int> node_id_;
+
+  std::vector<double> hw_commands_positions_;
+  std::vector<double> hw_commands_velocities_;
+  std::vector<double> hw_commands_efforts_;
+  std::vector<double> hw_positions_;
+  std::vector<double> hw_velocities_;
+  std::vector<double> hw_efforts_;
+
+  enum class integration_level_t : int32_t
+  {
+    UNDEFINED = 0,
+    EFFORT = 1,
+    VELOCITY = 2,
+    POSITION = 3
+  };
+  
+  std::vector<integration_level_t> control_level_;
 };
 }  // namespace four_wheel_steering_hardware_interface
 

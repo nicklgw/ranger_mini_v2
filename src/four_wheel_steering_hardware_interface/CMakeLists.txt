@@ -24,28 +24,10 @@ include_directories(${motor-driver_INCLUDE_DIRS})
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
-include(FindPkgConfig)
-pkg_search_module(LIBUSB1 REQUIRED libusb-1.0)
-
-if(LIBUSB1_FOUND)
-  include_directories(SYSTEM ${LIBUSB1_INCLUDE_DIRS})
-else()
-  message( FATAL_ERROR "Failed to find libusb-1.0" )
-endif()
-
-ament_auto_add_library(
-  odrive_usb SHARED
-  src/odrive_usb.cpp
-)
-target_link_libraries(
-  odrive_usb
-  ${LIBUSB1_LIBRARIES}
-)
-
 ament_auto_add_library(
   ${PROJECT_NAME} SHARED
   src/four_wheel_steering_hardware_interface.cpp
-  src/diff_drive_helper.cpp 
+  src/four_wheel_steering_drive_helper.cpp
 )
 
 pluginlib_export_plugin_description_file(hardware_interface four_wheel_steering_hardware_interface.xml)

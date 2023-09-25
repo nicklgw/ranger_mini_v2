@@ -1,10 +1,10 @@
 
 #include <stdarg.h>
 #include "motor_driver_adapter.h"
-#include "four_wheel_steering_hardware_interface/diff_drive_helper.h"
+#include "four_wheel_steering_hardware_interface/four_wheel_steering_drive_helper.h"
 
 
-namespace DiffDriveHelper
+namespace FourWheelSteeringDriveHelper
 {
 
 #define M_PI       3.14159265358979323846
@@ -344,8 +344,10 @@ int    Exit() // 电机退出
 	MotorExit();
 }
 
-double GetVelocity(int index) // 获取指定轮子角速度, 单位rad/s
+double GetVelocity(int node_id) // 获取指定轮子角速度, 单位rad/s
 {
+	int index = getIndexFromNodeId(node_id, motor_info);
+
 	double motor_rpm = motor_info[index].speed;
 	
 	double motor_vel = motor_rpm * M_PI / 30;
@@ -356,25 +358,36 @@ double GetVelocity(int index) // 获取指定轮子角速度, 单位rad/s
 	return wheel_vel;
 }
 
-int SetVelocity(int index, double wheel_vel) // 设置指定轮子角速度，单位rad/s
+int SetVelocity(int node_id, double wheel_vel) // 设置指定轮子角速度，单位rad/s
 {
 	double motor_vel = wheel_vel * REDUCTION_RATIO;
 	double motor_rpm = motor_vel * 30 / M_PI;	
 	
-    log_func(LOG_LEVEL_INFO, "<%s,%d> SetVelocity index: %d, motor_rpm: %f, motor_vel: %f, wheel_vel: %f", __func__, __LINE__, index, motor_rpm, motor_vel, wheel_vel);
+    log_func(LOG_LEVEL_INFO, "<%s,%d> SetVelocity node_id: %d, motor_rpm: %f, motor_vel: %f, wheel_vel: %f", __func__, __LINE__, node_id, motor_rpm, motor_vel, wheel_vel);
 	
-	BzlSetMotorSpeed(motor_info[index].node_id, motor_rpm);
+	BzlSetMotorSpeed(node_id, motor_rpm);
 	
 	return 0;
 }
 
-double GetPosition(int index) // 获取指定轮子位置, 单位rad
+double GetPosition(int node_id) // 获取指定轮子位置, 单位rad
 {
+	int index = getIndexFromNodeId(node_id, motor_info);
+
 	double motor_position = motor_info[index].position;
-	double wheel_cycles = motor_position  / 10000.0 / REDUCTION_RATIO; // 轉了多少圈
-	double wheel_position = wheel_cycles * 2 * M_PI; // 單位rad
+	double wheel_cycles = motor_position  / 10000.0 / REDUCTION_RATIO; // 转了多少圈
+	double wheel_position = wheel_cycles * 2 * M_PI; // 单位rad
 	
 	return wheel_position;
+}
+
+int SetPosition(int node_id, double pos)  // 设置指定轮子位置, 单位rad
+{
+	double degree = pos / M_PI * 180; // 角度转为弧度
+
+	BzlSetMotorAngle(node_id, degree);
+	
+	return 0;
 }
 
 }
