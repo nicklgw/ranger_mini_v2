@@ -300,38 +300,130 @@ int Init() // 电机初始化
 {
 	int		 motor_init_flag = 0;
 	
-	sg_ini.can_node_num = 2;
-    sprintf(sg_ini.can_interface, "%s", "usbcan0");
+	sg_ini.can_node_num = 8;
+    sprintf(sg_ini.can_interface, "%s", "can1");
 
-	sg_ini.node_info[RIGHT].motor_type = MOTOR_TYPE_KINCO;
-    sg_ini.node_info[RIGHT].node_id = 1;
-    sg_ini.node_info[RIGHT].operation_mode = -3;
-    sg_ini.node_info[RIGHT].profile_acc = 100;
-    sg_ini.node_info[RIGHT].profile_dec = 100;
-    sg_ini.node_info[RIGHT].max_speed = 3000;
-    sg_ini.node_info[RIGHT].profile_speed = 1000;
-    sg_ini.node_info[RIGHT].encoder_dpi = 10000;
-    sg_ini.node_info[RIGHT].install_direction = 1;
-    sg_ini.node_info[RIGHT].home_trigger = 0;
-    sg_ini.node_info[RIGHT].en_profile_speed = 1;
-	sg_ini.node_info[RIGHT].reduction_ratio = 15;
+	sg_ini.node_info[0].motor_type = MOTOR_TYPE_KINCO;
+    sg_ini.node_info[0].node_id = 1;
+    sg_ini.node_info[0].operation_mode = 1;
+    sg_ini.node_info[0].profile_acc = 100;
+    sg_ini.node_info[0].profile_dec = 100;
+    sg_ini.node_info[0].max_speed = 3000;
+    sg_ini.node_info[0].profile_speed = 500;
+    sg_ini.node_info[0].encoder_dpi = 65536;
+    sg_ini.node_info[0].install_direction = 1;
+    sg_ini.node_info[0].home_trigger = 0;
+    sg_ini.node_info[0].en_profile_speed = 1;
+	sg_ini.node_info[0].reduction_ratio = 138.6;
 
-    sg_ini.node_info[LEFT].motor_type = MOTOR_TYPE_KINCO;
-    sg_ini.node_info[LEFT].node_id = 2;
-    sg_ini.node_info[LEFT].operation_mode = -3;
-    sg_ini.node_info[LEFT].profile_acc = 100;
-    sg_ini.node_info[LEFT].profile_dec = 100;
-    sg_ini.node_info[LEFT].max_speed = 3000;
-    sg_ini.node_info[LEFT].install_direction = 0;
-    sg_ini.node_info[LEFT].home_trigger = 0;
-    sg_ini.node_info[LEFT].profile_speed = 1000;
-    sg_ini.node_info[LEFT].encoder_dpi = 10000;
-    sg_ini.node_info[LEFT].en_profile_speed = 1;
-	sg_ini.node_info[LEFT].reduction_ratio = 15;
+    sg_ini.node_info[1].motor_type = MOTOR_TYPE_KINCO;
+    sg_ini.node_info[1].node_id = 2;
+    sg_ini.node_info[1].operation_mode = 1;
+    sg_ini.node_info[1].profile_acc = 100;
+    sg_ini.node_info[1].profile_dec = 100;
+    sg_ini.node_info[1].max_speed = 3000;
+    sg_ini.node_info[1].install_direction = 0;
+    sg_ini.node_info[1].home_trigger = 0;
+    sg_ini.node_info[1].profile_speed = 500;
+    sg_ini.node_info[1].encoder_dpi = 65536;
+    sg_ini.node_info[1].en_profile_speed = 1;
+	sg_ini.node_info[1].reduction_ratio = 138.6;
+	
+	sg_ini.node_info[2].motor_type = MOTOR_TYPE_KINCO;
+    sg_ini.node_info[2].node_id = 3;
+    sg_ini.node_info[2].operation_mode = 1;
+    sg_ini.node_info[2].profile_acc = 100;
+    sg_ini.node_info[2].profile_dec = 100;
+    sg_ini.node_info[2].max_speed = 3000;
+    sg_ini.node_info[2].install_direction = 0;
+    sg_ini.node_info[2].home_trigger = 0;
+    sg_ini.node_info[2].profile_speed = 500;
+    sg_ini.node_info[2].encoder_dpi = 65536;
+    sg_ini.node_info[2].en_profile_speed = 1;
+	sg_ini.node_info[2].reduction_ratio = 138.6;
+	
+	sg_ini.node_info[3].motor_type = MOTOR_TYPE_KINCO;
+    sg_ini.node_info[3].node_id = 4;
+    sg_ini.node_info[3].operation_mode = 1;
+    sg_ini.node_info[3].profile_acc = 100;
+    sg_ini.node_info[3].profile_dec = 100;
+    sg_ini.node_info[3].max_speed = 3000;
+    sg_ini.node_info[3].install_direction = 0;
+    sg_ini.node_info[3].home_trigger = 0;
+    sg_ini.node_info[3].profile_speed = 500;
+    sg_ini.node_info[3].encoder_dpi = 65536;
+    sg_ini.node_info[3].en_profile_speed = 1;
+	sg_ini.node_info[3].reduction_ratio = 138.6;
+	
+	sg_ini.node_info[4].motor_type = MOTOR_TYPE_KINCO;
+    sg_ini.node_info[4].node_id = 5;
+    sg_ini.node_info[4].operation_mode = -3;
+    sg_ini.node_info[4].profile_acc = 100;
+    sg_ini.node_info[4].profile_dec = 100;
+    sg_ini.node_info[4].max_speed = 3000;
+    sg_ini.node_info[4].install_direction = 0;
+    sg_ini.node_info[4].home_trigger = 0;
+    sg_ini.node_info[4].profile_speed = 500;
+    sg_ini.node_info[4].encoder_dpi = 10000;
+    sg_ini.node_info[4].en_profile_speed = 1;
+	sg_ini.node_info[4].reduction_ratio = 45.5;
+	
+	sg_ini.node_info[5].motor_type = MOTOR_TYPE_KINCO;
+    sg_ini.node_info[5].node_id = 6;
+    sg_ini.node_info[5].operation_mode = -3;
+    sg_ini.node_info[5].profile_acc = 100;
+    sg_ini.node_info[5].profile_dec = 100;
+    sg_ini.node_info[5].max_speed = 3000;
+    sg_ini.node_info[5].install_direction = 0;
+    sg_ini.node_info[5].home_trigger = 0;
+    sg_ini.node_info[5].profile_speed = 500;
+    sg_ini.node_info[5].encoder_dpi = 10000;
+    sg_ini.node_info[5].en_profile_speed = 1;
+	sg_ini.node_info[5].reduction_ratio = 45.5;
+	
+	sg_ini.node_info[6].motor_type = MOTOR_TYPE_KINCO;
+    sg_ini.node_info[6].node_id = 7;
+    sg_ini.node_info[6].operation_mode = -3;
+    sg_ini.node_info[6].profile_acc = 100;
+    sg_ini.node_info[6].profile_dec = 100;
+    sg_ini.node_info[6].max_speed = 3000;
+    sg_ini.node_info[6].install_direction = 0;
+    sg_ini.node_info[6].home_trigger = 0;
+    sg_ini.node_info[6].profile_speed = 500;
+    sg_ini.node_info[6].encoder_dpi = 10000;
+    sg_ini.node_info[6].en_profile_speed = 1;
+	sg_ini.node_info[6].reduction_ratio = 45.5;
+	
+	sg_ini.node_info[7].motor_type = MOTOR_TYPE_KINCO;
+    sg_ini.node_info[7].node_id = 8;
+    sg_ini.node_info[7].operation_mode = -3;
+    sg_ini.node_info[7].profile_acc = 100;
+    sg_ini.node_info[7].profile_dec = 100;
+    sg_ini.node_info[7].max_speed = 3000;
+    sg_ini.node_info[7].install_direction = 0;
+    sg_ini.node_info[7].home_trigger = 0;
+    sg_ini.node_info[7].profile_speed = 500;
+    sg_ini.node_info[7].encoder_dpi = 10000;
+    sg_ini.node_info[7].en_profile_speed = 1;
+	sg_ini.node_info[7].reduction_ratio = 45.5;
+	
+	// front_left_wheel: fl_wheel = 1;
+    // front_right_wheel: fr_wheel = 4;
+    // rear_left_wheel: rl_wheel = 2;
+    // rear_right_wheel: rr_wheel = 3;
+    // front_left_steering: fl_steering_wheel = 5;
+    // front_right_steering: fr_steering_wheel = 8;
+    // rear_left_steering: rl_steering_wheel = 6;
+    // rear_right_steering: rr_steering_wheel = 7;
 
-	motors_info.motor[RIGHT].node_id = sg_ini.node_info[RIGHT].node_id;
-
-	motors_info.motor[LEFT].node_id = sg_ini.node_info[LEFT].node_id;
+	motors_info.motor[0].node_id = sg_ini.node_info[0].node_id;
+	motors_info.motor[1].node_id = sg_ini.node_info[1].node_id;
+	motors_info.motor[2].node_id = sg_ini.node_info[2].node_id;
+	motors_info.motor[3].node_id = sg_ini.node_info[3].node_id;
+	motors_info.motor[4].node_id = sg_ini.node_info[4].node_id;
+	motors_info.motor[5].node_id = sg_ini.node_info[5].node_id;
+	motors_info.motor[6].node_id = sg_ini.node_info[6].node_id;
+	motors_info.motor[7].node_id = sg_ini.node_info[7].node_id;
 
     motor_init_flag = MotorInit(&sg_ini, &MotorListCallBack);
     log_func(LOG_LEVEL_INFO, "<%s,%d> Init:%d ", __func__, __LINE__, motor_init_flag);
@@ -384,7 +476,7 @@ double GetPosition(int node_id) // 获取指定轮子位置, 单位rad
 int SetPosition(int node_id, double pos)  // 设置指定轮子位置, 单位rad
 {
 	double degree = pos / M_PI * 180; // 角度转为弧度
-
+	
 	BzlSetMotorAngle(node_id, degree);
 	
 	return 0;

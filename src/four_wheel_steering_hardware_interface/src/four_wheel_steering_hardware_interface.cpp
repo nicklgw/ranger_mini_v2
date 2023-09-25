@@ -37,6 +37,11 @@ hardware_interface::CallbackReturn FourWheelSteeringHardwareInterface::on_init(c
     node_id_.emplace_back(std::stoi(joint.parameters.at("node_id")));
   }
 
+  for (size_t i = 0; i < info_.joints.size(); i++) 
+  {
+    RCLCPP_INFO(rclcpp::get_logger("FourWheelSteeringHardware"), "on_init name: %s, node_id: %d", info_.joints[i].name.c_str(), node_id_[i]);
+  }
+
   control_level_.resize(info_.joints.size(), integration_level_t::UNDEFINED);
 
   int ret = FourWheelSteeringDriveHelper::Init();
