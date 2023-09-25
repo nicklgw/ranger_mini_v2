@@ -15,8 +15,7 @@ ament_auto_find_build_dependencies()
 ament_auto_add_library(four_wheel_steering_controller SHARED
   src/four_wheel_steering_controller.cpp
   src/odometry.cpp
-  src/speed_limiter.cpp  
-  src/model.cpp
+  src/speed_limiter.cpp
 )
 
 pluginlib_export_plugin_description_file(controller_interface four_wheel_steering_controller_plugin.xml)
