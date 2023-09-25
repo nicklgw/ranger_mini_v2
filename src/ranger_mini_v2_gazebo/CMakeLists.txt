@@ -38,8 +38,7 @@ set(dependencies
 ################################################################################
 install(
   DIRECTORY
-    launch
-    models
+    launch    
     rviz
     scripts    
     worlds
@@ -51,16 +50,6 @@ install(
   PROGRAMS
   scripts/robot_control.py
   DESTINATION lib/${PROJECT_NAME}
-)
-
-install(
-  DIRECTORY
-    
-    models/ 
-        
-    
-    
-  DESTINATION share/${PROJECT_NAME}/
 )
 
 ################################################################################

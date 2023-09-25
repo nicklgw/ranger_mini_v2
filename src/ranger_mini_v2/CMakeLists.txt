@@ -22,7 +22,16 @@ endforeach()
 # INSTALL
 install(
   DIRECTORY       
-    meshes
+  meshes
+  config
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+install(
+  FILES
+  model.config
+  ranger_mini_v2.sdf
+  
   DESTINATION share/${PROJECT_NAME}/
 )
 

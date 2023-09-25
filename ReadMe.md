@@ -17,6 +17,8 @@ nick@nick-vmware:~/ranger_mini_v2/src/ranger_mini_v2_gazebo/xacro$ gz sdf -p ran
 将sdf重命名为ranger_mini_v2.sdf，放置到ranger_mini_v2_gazebo/models/ranger_mini_v2
 
 
+E:\projects\ros2_control_demos\example_9\bringup\launchs\rrbot_gazebo_classic.launch.py
+
 four_wheel_steering_msgs来自ros2分支
 https://github.com/ros-drivers/four_wheel_steering_msgs.git
 

@@ -28,42 +28,24 @@ def generate_launch_description():
             ),
         )
 
-    controller = IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(
-                os.path.join(launch_file_dir, 'four_ws_control.launch.py')
-            ),
-        )
-
     robot_state_publisher = IncludeLaunchDescription(
             PythonLaunchDescriptionSource([launch_file_dir, '/robot_state_publisher.launch.py']),
             launch_arguments={'use_sim_time': use_sim_time}.items(),
         )
 
-    forward_position_controller = ExecuteProcess( 
-            cmd=['ros2', 'control', 'load_controller', '--set-state', 'active', 'forward_position_controller'], output='screen'
-        )
-
-    forward_velocity_controller = ExecuteProcess(
-            cmd=['ros2', 'control', 'load_controller', '--set-state', 'active', 'forward_velocity_controller'], output='screen'
+    four_wheel_steering_controller = ExecuteProcess( 
+            cmd=['ros2', 'control', 'load_controller', '--set-state', 'active', 'four_wheel_steering_controller'], output='screen'
         )
 
     joint_state_broadcaster = ExecuteProcess(
             cmd=['ros2', 'control', 'load_controller', '--set-state', 'active', 'joint_state_broadcaster'], output='screen'
-        )
-        
-    joy_node = Node(
-        package = "joy",
-        executable = "joy_node"
         )
 
     nodes = [
         gzserver,
         gzclient, 
         robot_state_publisher,
-        joy_node,
-        controller,
-        forward_position_controller,
-        forward_velocity_controller,
+        four_wheel_steering_controller,
         joint_state_broadcaster
     ]
 

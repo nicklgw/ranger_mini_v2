@@ -356,7 +356,9 @@
       <state_interface name="effort"/>
     </joint>
   </ros2_control>
-  <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
-    <parameters>/home/nvidia/ranger_mini_v2/install/ranger_mini_control/share/ranger_mini_control/config/controller.yaml</parameters>
+  
+  <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+    <parameters>/home/nvidia/ranger_mini_v2/install/ranger_mini_v2/share/ranger_mini_v2/config/controllers.yaml</parameters>
   </plugin>
+
 </robot>

@@ -15,11 +15,15 @@
   <depend>sensor_msgs</depend>
   <depend>tf2</depend>
 
+  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>gazebo_ros2_control</exec_depend>
+  <exec_depend>joint_state_broadcaster</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+  <exec_depend>xacro</exec_depend>
+
   <export>
     <build_type>ament_cmake</build_type>
-    <gazebo_ros gazebo_model_path="${prefix}/models"/>
   </export>
 </package>
-
-<!--https://answers.gazebosim.org//question/6568/uri-paths-to-packages-in-the-sdf-model-file/-->
-

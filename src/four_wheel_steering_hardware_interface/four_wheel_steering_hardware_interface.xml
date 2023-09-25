@@ -1,0 +1,9 @@
+<library path="four_wheel_steering_hardware_interface">
+  <class name="four_wheel_steering_hardware_interface/FourWheelSteeringHardwareInterface"
+         type="four_wheel_steering_hardware_interface::FourWheelSteeringHardwareInterface"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      FourWheelSteering plugin for ros2_control.
+    </description>
+  </class>
+</library>
