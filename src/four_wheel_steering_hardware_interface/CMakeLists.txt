@@ -15,6 +15,11 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic -Wno-implicit-fallthrough)
 endif()
 
+# 添加电机驱动库
+list(APPEND CMAKE_PREFIX_PATH "/usr/local/bzl_robot/lib/cmake/motor-driver") 
+find_package(motor-driver REQUIRED) 
+include_directories(${motor-driver_INCLUDE_DIRS})
+
 # find dependencies
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
@@ -40,6 +45,7 @@ target_link_libraries(
 ament_auto_add_library(
   ${PROJECT_NAME} SHARED
   src/four_wheel_steering_hardware_interface.cpp
+  src/diff_drive_helper.cpp 
 )
 
 pluginlib_export_plugin_description_file(hardware_interface four_wheel_steering_hardware_interface.xml)
