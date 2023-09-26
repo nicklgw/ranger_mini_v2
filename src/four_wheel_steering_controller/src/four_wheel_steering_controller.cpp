@@ -353,9 +353,8 @@ CallbackReturn FourWheelSteeringController::on_configure(const rclcpp_lifecycle:
 }
 
 CallbackReturn FourWheelSteeringController::on_activate(const rclcpp_lifecycle::State &)
-{ 
+{
   RCLCPP_INFO(get_node()->get_logger(), "On activate: Initialize Joints");
-  RCLCPP_INFO(get_node()->get_logger(), "front_left_wheel_: %s", front_left_wheel_.c_str());
 
   // Initialize the joints
   const auto front_left_traction_result = get_traction(front_left_wheel_, front_left_traction_handle_);
@@ -673,7 +672,6 @@ controller_interface::return_type FourWheelSteeringController::updateCommand(con
     curr_cmd_4ws->rear_steering = 0.0;
   }
 
-  enable_twist_cmd_ = true; // 临时写死，有bug导致该值为false
   RCLCPP_INFO(get_node()->get_logger(), "do cmd_vel(X:%.3f, Y:%.3f, W:%.3f) enable_twist_cmd_: %d", curr_cmd_twist->lin_x, curr_cmd_twist->lin_y, curr_cmd_twist->ang, enable_twist_cmd_);
 
   const double cmd_dt(period.seconds());

@@ -111,8 +111,6 @@ namespace four_wheel_steering_controller
         pivot_turn = false;
     }
 
-    fprintf(stderr, "Odometry::update pivot_turn: %d \n", pivot_turn);
-
     /// Compute x, y and heading using velocity
     const double dt = (time - last_update_timestamp_).seconds(); 
     if (dt < 0.0001)
