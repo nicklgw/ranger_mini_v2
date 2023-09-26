@@ -8,6 +8,9 @@ nick@nick-vmware:~/ranger_mini_v2$ ros2 launch ranger_mini_v2_gazebo ranger_mini
 手动遥控
 nick@nick-vmware:~/ranger_mini_v2$ ros2 run teleop_twist_keyboard teleop_twist_keyboard
 
+加载实际驱动，并启动显示rviz2
+nvidia@nvidia-pc:~/ranger_mini_v2$ ros2 launch ranger_mini_v2_gazebo display_real.launch.py
+
 将xacro转为URDF
 nick@nick-vmware:~/ranger_mini_v2/src/ranger_mini_v2_gazebo/xacro$ xacro ranger_mini_gazebo.xacro > ranger_mini_gazebo.urdf
 

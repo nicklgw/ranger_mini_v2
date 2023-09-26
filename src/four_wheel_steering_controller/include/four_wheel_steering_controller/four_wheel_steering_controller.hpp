@@ -141,9 +141,9 @@ protected:
   /// Twist command related:
   realtime_tools::RealtimeBox<std::shared_ptr<CommandTwist>> command_twist_{nullptr};
   CommandTwist command_struct_twist_;
-  rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr sub_command_twist_ = nullptr;
-  rclcpp::Subscription<geometry_msgs::msg::TwistStamped>::SharedPtr sub_command_twist_stamped_ = nullptr;
-
+  rclcpp::Subscription<geometry_msgs::msg::TwistStamped>::SharedPtr sub_command_twist_ = nullptr;
+  rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr sub_command_twist_unstamped_ = nullptr;
+  
   /// FourWheelSteering command related:
   realtime_tools::RealtimeBox<std::shared_ptr<Command4ws>> command_4ws_{nullptr};
   Command4ws command_struct_4ws_;

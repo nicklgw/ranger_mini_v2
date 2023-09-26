@@ -15,7 +15,6 @@
 #include "four_wheel_steering_hardware_interface/four_wheel_steering_hardware_interface.hpp"
 #include "four_wheel_steering_hardware_interface/four_wheel_steering_drive_helper.h"
 
-
 namespace four_wheel_steering_hardware_interface
 {
 hardware_interface::CallbackReturn FourWheelSteeringHardwareInterface::on_init(const hardware_interface::HardwareInfo & info)
@@ -37,27 +36,33 @@ hardware_interface::CallbackReturn FourWheelSteeringHardwareInterface::on_init(c
     node_id_.emplace_back(std::stoi(joint.parameters.at("node_id")));
   }
 
-  for (size_t i = 0; i < info_.joints.size(); i++) 
-  {
-    RCLCPP_INFO(rclcpp::get_logger("FourWheelSteeringHardware"), "on_init name: %s, node_id: %d", info_.joints[i].name.c_str(), node_id_[i]);
-  }
-
   control_level_.resize(info_.joints.size(), integration_level_t::UNDEFINED);
 
-  int ret = FourWheelSteeringDriveHelper::Init();
-  RCLCPP_INFO(rclcpp::get_logger("FourWheelSteeringHardware"), "FourWheelSteeringDriveHelper::Init(): %d", ret);
+  // int ret = FourWheelSteeringDriveHelper::Init();
+  // RCLCPP_INFO(rclcpp::get_logger("FourWheelSteeringHardware"), "FourWheelSteeringDriveHelper::Init(): %d", ret);
+  RCLCPP_INFO(rclcpp::get_logger("FourWheelSteeringHardware"), "FourWheelSteeringDriveHelper::Init()");
 
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 hardware_interface::CallbackReturn FourWheelSteeringHardwareInterface::on_activate(const rclcpp_lifecycle::State &)
 {
+  for (size_t i = 0; i < info_.joints.size(); i++)
+  {
+    hw_positions_[i] = 0.0;
+    hw_velocities_[i] = 0.0;
+    hw_efforts_[i] = 0.0;
+    hw_commands_positions_[i] = 0.0;
+    hw_commands_velocities_[i] = 0.0;
+    hw_commands_efforts_[i] = 0.0;
+  }
+
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 hardware_interface::CallbackReturn FourWheelSteeringHardwareInterface::on_deactivate(const rclcpp_lifecycle::State &)
 {
-  FourWheelSteeringDriveHelper::Exit();
+  // FourWheelSteeringDriveHelper::Exit();
   RCLCPP_INFO(rclcpp::get_logger("FourWheelSteeringHardware"), "FourWheelSteeringDriveHelper::Exit()");
 
   return hardware_interface::CallbackReturn::SUCCESS;
@@ -146,7 +151,6 @@ hardware_interface::return_type FourWheelSteeringHardwareInterface::perform_comm
 {
   for (size_t i = 0; i < info_.joints.size(); i++) 
   {
-
     switch (control_level_[i]) 
     {
       case integration_level_t::UNDEFINED:
@@ -166,18 +170,39 @@ hardware_interface::return_type FourWheelSteeringHardwareInterface::perform_comm
   return hardware_interface::return_type::OK;
 }
 
-hardware_interface::return_type FourWheelSteeringHardwareInterface::read(const rclcpp::Time &, const rclcpp::Duration &)
+hardware_interface::return_type FourWheelSteeringHardwareInterface::read(const rclcpp::Time & time, const rclcpp::Duration & period)
 {
   for (size_t i = 0; i < info_.joints.size(); i++) 
   {
-    hw_velocities_[i] = FourWheelSteeringDriveHelper::GetVelocity(node_id_[i]);
-    hw_positions_[i] = FourWheelSteeringDriveHelper::GetPosition(node_id_[i]);
+    // hw_velocities_[i] = FourWheelSteeringDriveHelper::GetVelocity(node_id_[i]);
+    // hw_positions_[i] = FourWheelSteeringDriveHelper::GetPosition(node_id_[i]);
+    // hw_velocities_[i] = hw_commands_velocities_[i];
+    // hw_positions_[i] = hw_commands_positions_[i];
+    // hw_positions_[i] = hw_positions_[i] + period.seconds() * hw_velocities_[i];
+    
+    // RCLCPP_INFO(rclcpp::get_logger("FourWheelSteeringHardware"), "control_level_[%d]: %d", i, control_level_[i]);
+
+    switch (control_level_[i]) 
+    {
+      case integration_level_t::POSITION:
+        hw_positions_[i];
+        break;
+      case integration_level_t::VELOCITY:
+        hw_positions_[i] = hw_positions_[i] + period.seconds() * hw_velocities_[i];
+        break;
+      case integration_level_t::EFFORT:
+
+        break;
+      case integration_level_t::UNDEFINED:
+
+        break;
+    }
   }
 
   return hardware_interface::return_type::OK;
 }
 
-hardware_interface::return_type FourWheelSteeringHardwareInterface::write(const rclcpp::Time &, const rclcpp::Duration &)
+hardware_interface::return_type FourWheelSteeringHardwareInterface::write(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
   for (size_t i = 0; i < info_.joints.size(); i++) 
   {
@@ -187,15 +212,17 @@ hardware_interface::return_type FourWheelSteeringHardwareInterface::write(const 
     {
       case integration_level_t::POSITION:
         input_pos = hw_commands_positions_[i];
-        FourWheelSteeringDriveHelper::SetPosition(node_id_[i], input_pos);
-
+        hw_positions_[i] = hw_commands_positions_[i];
+        // FourWheelSteeringDriveHelper::SetPosition(node_id_[i], input_pos);
+        break;
       case integration_level_t::VELOCITY:
         input_vel = hw_commands_velocities_[i];
-        FourWheelSteeringDriveHelper::SetVelocity(node_id_[i], input_vel);  // 设置指定轮子角速度，单位rad/s
-
+        hw_velocities_[i] = hw_commands_velocities_[i];
+        // FourWheelSteeringDriveHelper::SetVelocity(node_id_[i], input_vel);  // 设置指定轮子角速度，单位rad/s
+        break;
       case integration_level_t::EFFORT:
         input_torque = hw_commands_efforts_[i];
-
+        break;
       case integration_level_t::UNDEFINED:
         break;
     }

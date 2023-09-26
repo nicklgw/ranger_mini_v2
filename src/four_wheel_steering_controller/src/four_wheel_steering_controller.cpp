@@ -28,11 +28,13 @@
 
 namespace
 {
-constexpr auto DEFAULT_CMD_VEL_TOPIC = "/cmd_vel";
-constexpr auto DEFAULT_CMD_VEL_STAMPED_TOPIC = "/cmd_vel_stamped";
-constexpr auto DEFAULT_CMD_4WS_TOPIC = "/cmd_4ws";
-constexpr auto DEFAULT_ODOMETRY_TOPIC = "/odom";
+constexpr auto DEFAULT_COMMAND_TOPIC = "~/cmd_vel";
+constexpr auto DEFAULT_COMMAND_UNSTAMPED_TOPIC = "~/cmd_vel_unstamped";
+constexpr auto DEFAULT_COMMAND_OUT_TOPIC = "~/cmd_vel_out";
+constexpr auto DEFAULT_ODOMETRY_TOPIC = "~/odom";
 constexpr auto DEFAULT_TRANSFORM_TOPIC = "/tf";
+constexpr auto DEFAULT_CMD_4WS_TOPIC = "~/cmd_4ws";
+constexpr auto DEFAULT_ODOM_4WS_TOPIC = "~/odom_4ws";
 }  // namespace
 
 namespace four_wheel_steering_controller
@@ -231,26 +233,8 @@ CallbackReturn FourWheelSteeringController::on_configure(const rclcpp_lifecycle:
   command_struct_twist_.stamp = get_node()->get_clock()->now();
   command_twist_.set(std::make_shared<CommandTwist>(command_struct_twist_));
 
-  sub_command_twist_ = get_node()->create_subscription<geometry_msgs::msg::Twist>(
-    DEFAULT_CMD_VEL_TOPIC, rclcpp::SystemDefaultsQoS(),
-        [this](const std::shared_ptr<geometry_msgs::msg::Twist> msg) -> void
-        {
-          if (!subscriber_is_active_)
-          {
-            RCLCPP_WARN(
-              get_node()->get_logger(), "Can't accept new commands. subscriber is inactive");
-            return;
-          }
-
-          command_struct_twist_.stamp = get_node()->get_clock()->now();
-          command_struct_twist_.lin_x = msg->linear.x;
-          command_struct_twist_.lin_y = msg->linear.y;
-          command_struct_twist_.ang = msg->angular.z;
-          command_twist_.set(std::make_shared<CommandTwist>(command_struct_twist_));
-        });
-
-  sub_command_twist_stamped_ = get_node()->create_subscription<geometry_msgs::msg::TwistStamped>(
-    DEFAULT_CMD_VEL_STAMPED_TOPIC, rclcpp::SystemDefaultsQoS(),
+  sub_command_twist_ = get_node()->create_subscription<geometry_msgs::msg::TwistStamped>(
+    DEFAULT_COMMAND_TOPIC, rclcpp::SystemDefaultsQoS(),
     [this](const std::shared_ptr<geometry_msgs::msg::TwistStamped> msg) -> void
     {
       if (!subscriber_is_active_)
@@ -273,6 +257,24 @@ CallbackReturn FourWheelSteeringController::on_configure(const rclcpp_lifecycle:
       command_struct_twist_.ang = msg->twist.angular.z;
       command_twist_.set(std::make_shared<CommandTwist>(command_struct_twist_));
     });
+
+  sub_command_twist_unstamped_ = get_node()->create_subscription<geometry_msgs::msg::Twist>(
+    DEFAULT_COMMAND_UNSTAMPED_TOPIC, rclcpp::SystemDefaultsQoS(),
+        [this](const std::shared_ptr<geometry_msgs::msg::Twist> msg) -> void
+        {
+          if (!subscriber_is_active_)
+          {
+            RCLCPP_WARN(
+              get_node()->get_logger(), "Can't accept new commands. subscriber is inactive");
+            return;
+          }
+
+          command_struct_twist_.stamp = get_node()->get_clock()->now();
+          command_struct_twist_.lin_x = msg->linear.x;
+          command_struct_twist_.lin_y = msg->linear.y;
+          command_struct_twist_.ang = msg->angular.z;
+          command_twist_.set(std::make_shared<CommandTwist>(command_struct_twist_));
+        });
 
   command_struct_4ws_.stamp = get_node()->get_clock()->now();
   command_4ws_.set(std::make_shared<Command4ws>(command_struct_4ws_));
@@ -444,7 +446,7 @@ bool FourWheelSteeringController::reset()
 
   subscriber_is_active_ = false;  
   sub_command_twist_.reset();
-  sub_command_twist_stamped_.reset();
+  sub_command_twist_unstamped_.reset();
   sub_command_4ws_.reset();
 
   command_twist_.set(nullptr);
