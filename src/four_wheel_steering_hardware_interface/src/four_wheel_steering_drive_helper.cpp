@@ -1,8 +1,6 @@
 
 #include <stdarg.h>
 #include "motor_driver_adapter.h"
-#include "four_wheel_steering_hardware_interface/four_wheel_steering_drive_helper.h"
-
 
 namespace FourWheelSteeringDriveHelper
 {
@@ -302,7 +300,7 @@ int Init() // 电机初始化
 	
 	sg_ini.can_node_num = 8;
     sprintf(sg_ini.can_interface, "%s", "can1");
-
+	
 	sg_ini.node_info[0].motor_type = MOTOR_TYPE_KINCO;
     sg_ini.node_info[0].node_id = 1;
     sg_ini.node_info[0].operation_mode = 1;

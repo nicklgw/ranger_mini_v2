@@ -15,6 +15,9 @@
 #include "four_wheel_steering_hardware_interface/four_wheel_steering_hardware_interface.hpp"
 #include "four_wheel_steering_hardware_interface/four_wheel_steering_drive_helper.h"
 
+// 0,虚拟机; 1,实体机
+#define PHYSICAL_MACHINE 0
+
 namespace four_wheel_steering_hardware_interface
 {
 hardware_interface::CallbackReturn FourWheelSteeringHardwareInterface::on_init(const hardware_interface::HardwareInfo & info)
@@ -38,9 +41,12 @@ hardware_interface::CallbackReturn FourWheelSteeringHardwareInterface::on_init(c
 
   control_level_.resize(info_.joints.size(), integration_level_t::UNDEFINED);
 
-  // int ret = FourWheelSteeringDriveHelper::Init();
-  // RCLCPP_INFO(rclcpp::get_logger("FourWheelSteeringHardware"), "FourWheelSteeringDriveHelper::Init(): %d", ret);
+#if PHYSICAL_MACHINE
+  int ret = FourWheelSteeringDriveHelper::Init();
+  RCLCPP_INFO(rclcpp::get_logger("FourWheelSteeringHardware"), "FourWheelSteeringDriveHelper::Init(): %d", ret);
+#else  
   RCLCPP_INFO(rclcpp::get_logger("FourWheelSteeringHardware"), "FourWheelSteeringDriveHelper::Init()");
+#endif
 
   return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -62,8 +68,10 @@ hardware_interface::CallbackReturn FourWheelSteeringHardwareInterface::on_activa
 
 hardware_interface::CallbackReturn FourWheelSteeringHardwareInterface::on_deactivate(const rclcpp_lifecycle::State &)
 {
-  // FourWheelSteeringDriveHelper::Exit();
+#if PHYSICAL_MACHINE
+  FourWheelSteeringDriveHelper::Exit();
   RCLCPP_INFO(rclcpp::get_logger("FourWheelSteeringHardware"), "FourWheelSteeringDriveHelper::Exit()");
+#endif
 
   return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -174,14 +182,10 @@ hardware_interface::return_type FourWheelSteeringHardwareInterface::read(const r
 {
   for (size_t i = 0; i < info_.joints.size(); i++) 
   {
-    // hw_velocities_[i] = FourWheelSteeringDriveHelper::GetVelocity(node_id_[i]);
-    // hw_positions_[i] = FourWheelSteeringDriveHelper::GetPosition(node_id_[i]);
-    // hw_velocities_[i] = hw_commands_velocities_[i];
-    // hw_positions_[i] = hw_commands_positions_[i];
-    // hw_positions_[i] = hw_positions_[i] + period.seconds() * hw_velocities_[i];
-    
-    // RCLCPP_INFO(rclcpp::get_logger("FourWheelSteeringHardware"), "control_level_[%d]: %d", i, control_level_[i]);
-
+#if PHYSICAL_MACHINE
+    hw_velocities_[i] = FourWheelSteeringDriveHelper::GetVelocity(node_id_[i]);
+    hw_positions_[i] = FourWheelSteeringDriveHelper::GetPosition(node_id_[i]);
+#else    
     switch (control_level_[i]) 
     {
       case integration_level_t::POSITION:
@@ -197,6 +201,7 @@ hardware_interface::return_type FourWheelSteeringHardwareInterface::read(const r
 
         break;
     }
+#endif
   }
 
   return hardware_interface::return_type::OK;
@@ -211,14 +216,24 @@ hardware_interface::return_type FourWheelSteeringHardwareInterface::write(const 
     switch (control_level_[i]) 
     {
       case integration_level_t::POSITION:
-        input_pos = hw_commands_positions_[i];
-        hw_positions_[i] = hw_commands_positions_[i];
-        // FourWheelSteeringDriveHelper::SetPosition(node_id_[i], input_pos);
+        {
+          input_pos = hw_commands_positions_[i];
+        #if PHYSICAL_MACHINE
+          FourWheelSteeringDriveHelper::SetPosition(node_id_[i], input_pos);
+        #else
+          hw_positions_[i] = hw_commands_positions_[i];
+        #endif
+        }
         break;
       case integration_level_t::VELOCITY:
-        input_vel = hw_commands_velocities_[i];
-        hw_velocities_[i] = hw_commands_velocities_[i];
-        // FourWheelSteeringDriveHelper::SetVelocity(node_id_[i], input_vel);  // 设置指定轮子角速度，单位rad/s
+        {
+          input_vel = hw_commands_velocities_[i];
+          #if PHYSICAL_MACHINE
+            hw_velocities_[i] = hw_commands_velocities_[i];
+          #else
+            FourWheelSteeringDriveHelper::SetVelocity(node_id_[i], input_vel);  // 设置指定轮子角速度，单位rad/s
+          #endif
+        }
         break;
       case integration_level_t::EFFORT:
         input_torque = hw_commands_efforts_[i];
