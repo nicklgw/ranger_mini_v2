@@ -229,9 +229,9 @@ hardware_interface::return_type FourWheelSteeringHardwareInterface::write(const 
         {
           input_vel = hw_commands_velocities_[i];
           #if PHYSICAL_MACHINE
-            hw_velocities_[i] = hw_commands_velocities_[i];
-          #else
             FourWheelSteeringDriveHelper::SetVelocity(node_id_[i], input_vel);  // 设置指定轮子角速度，单位rad/s
+          #else
+            hw_velocities_[i] = hw_commands_velocities_[i];
           #endif
         }
         break;
