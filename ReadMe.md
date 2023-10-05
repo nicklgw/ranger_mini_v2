@@ -31,3 +31,7 @@ nick@nick-vmware:~/ranger_mini_v2/src/ranger_mini_v2_gazebo/xacro$ xacro ranger_
 ```
 nick@nick-vmware:~/ranger_mini_v2/src/ranger_mini_v2_gazebo/xacro$ gz sdf -p ranger_mini_gazebo.urdf > ranger_mini_gazebo.sdf
 ```
+
+![松灵四舵轮机器人RangerMini2](./doc/simulation_gazebo.png)
+
+
