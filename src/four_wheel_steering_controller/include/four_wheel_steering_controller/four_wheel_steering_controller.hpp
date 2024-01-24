@@ -23,7 +23,6 @@
 #include <vector>
 
 #include "controller_interface/controller_interface.hpp"
-#include "four_wheel_steering_msgs/msg/four_wheel_steering_stamped.hpp"
 #include "hardware_interface/handle.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_lifecycle/state.hpp"
@@ -113,41 +112,24 @@ protected:
   std::string rear_right_steering_;
 
   /// Velocity command related:
-  struct Command
+  struct CommandTwist
   {
     rclcpp::Time stamp;
-    
-    Command() : stamp(0.0) {}
-  };
-  struct CommandTwist : Command
-  {
+
     double lin_x;
     double lin_y;
     double ang;
 
-    CommandTwist() : lin_x(0.0), lin_y(0.0), ang(0.0) {}
-  };
-  struct Command4ws : Command
-  {
-    double lin;
-    double front_steering;
-    double rear_steering;
-
-    Command4ws() : lin(0.0), front_steering(0.0), rear_steering(0.0) {}
+    CommandTwist() : stamp(0.0), lin_x(0.0), lin_y(0.0), ang(0.0) {}
   };
   
   bool subscriber_is_active_ = false;
-
+  
   /// Twist command related:
   realtime_tools::RealtimeBox<std::shared_ptr<CommandTwist>> command_twist_{nullptr};
   CommandTwist command_struct_twist_;
   rclcpp::Subscription<geometry_msgs::msg::TwistStamped>::SharedPtr sub_command_twist_ = nullptr;
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr sub_command_twist_unstamped_ = nullptr;
-  
-  /// FourWheelSteering command related:
-  realtime_tools::RealtimeBox<std::shared_ptr<Command4ws>> command_4ws_{nullptr};
-  Command4ws command_struct_4ws_;
-  rclcpp::Subscription<four_wheel_steering_msgs::msg::FourWheelSteeringStamped>::SharedPtr sub_command_4ws_;
   
   /// Odometry related:
   std::shared_ptr<rclcpp::Publisher<nav_msgs::msg::Odometry>> odometry_publisher_ = nullptr;
@@ -155,7 +137,7 @@ protected:
   
   std::shared_ptr<rclcpp::Publisher<tf2_msgs::msg::TFMessage>> odometry_transform_publisher_ = nullptr;
   std::shared_ptr<realtime_tools::RealtimePublisher<tf2_msgs::msg::TFMessage>> realtime_odometry_transform_publisher_ = nullptr;
-
+  
   Odometry odometry_;
 
   rclcpp::Time previous_update_timestamp_{0};
@@ -177,7 +159,6 @@ protected:
   std::string base_frame_id_; /// Frame to use for the robot base  
   std::string odom_frame_id_;
   bool enable_odom_tf_; /// Whether to publish odometry to tf or not  
-  bool enable_twist_cmd_; /// Whether the control is make with four_wheel_steering msg or twist msg
 
   /// Speed limiters:
   std::shared_ptr<CommandTwist> last1_cmd_;
