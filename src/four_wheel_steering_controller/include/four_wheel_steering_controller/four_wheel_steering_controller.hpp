@@ -159,13 +159,15 @@ protected:
   std::string base_frame_id_; /// Frame to use for the robot base  
   std::string odom_frame_id_;
   bool enable_odom_tf_; /// Whether to publish odometry to tf or not  
-
+  bool wait_for_angle_;
+  double min_steering_diff_;
+  
   /// Speed limiters:
   std::shared_ptr<CommandTwist> last1_cmd_;
   std::shared_ptr<CommandTwist> last0_cmd_;
   SpeedLimiter limiter_lin_;
   SpeedLimiter limiter_ang_;
-
+  
   bool is_halted = false;
   bool use_stamped_vel_ = true;
   

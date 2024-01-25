@@ -18,7 +18,7 @@ four_wheel_steering_controller:
     front_right_steering: fr_steering_wheel
     rear_left_steering: rl_steering_wheel
     rear_right_steering: rr_steering_wheel
-
+	
     track: 0.423065
     wheel_radius: 0.1
     wheel_base: 0.490102
@@ -30,6 +30,8 @@ four_wheel_steering_controller:
     cmd_vel_timeout: 1.0
     odom_frame_id: odom
     base_frame_id: base_footprint
+	wait_for_angle: true
+	min_steering_diff: 0.05
     
     # Velocity and acceleration limits
     # Whenever a min_* is unspecified, default to -max_*
