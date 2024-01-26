@@ -733,9 +733,9 @@ controller_interface::return_type FourWheelSteeringController::updateCommand(con
       double rr_steering = rear_right_steering_handle_->position_state.get().get_value(); // in radians
       
       if ((fabs(front_left_steering-fl_steering)>min_steering_diff_)
-        ||(fabs(front_left_steering-fl_steering)>min_steering_diff_)
-        ||(fabs(front_left_steering-fl_steering)>min_steering_diff_)
-        ||(fabs(front_left_steering-fl_steering)>min_steering_diff_))
+        ||(fabs(front_right_steering-fr_steering)>min_steering_diff_)
+        ||(fabs(rear_left_steering-rl_steering)>min_steering_diff_)
+        ||(fabs(rear_right_steering-rr_steering)>min_steering_diff_))
       {
         vel_left_front = 0.0;
         vel_right_front = 0.0;
