@@ -18,20 +18,21 @@ four_wheel_steering_controller:
     front_right_steering: fr_steering_wheel
     rear_left_steering: rl_steering_wheel
     rear_right_steering: rr_steering_wheel
-	
+    chassis_type: all # all-四舵轮(全), flrr-四舵轮(前左fl,后右rr), frrl-四舵轮(前右fr,后左rl)
+
     track: 0.423065
     wheel_radius: 0.1
     wheel_base: 0.490102
     wheel_steering_y_offset: 0.0316228
-    
+
     publish_rate: 50.0
     open_loop: true
     enable_odom_tf: true
     cmd_vel_timeout: 1.0
     odom_frame_id: odom
     base_frame_id: base_footprint
-	wait_for_angle: true
-	min_steering_diff: 0.05
+    wait_for_angle: true
+    min_steering_diff: 0.05
     
     # Velocity and acceleration limits
     # Whenever a min_* is unspecified, default to -max_*

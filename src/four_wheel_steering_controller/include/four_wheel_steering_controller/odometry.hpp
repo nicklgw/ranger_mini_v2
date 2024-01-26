@@ -48,7 +48,9 @@ namespace four_wheel_steering_controller
    */
   class Odometry
   {
-  public:
+  public:    
+     using UpdateFunction = std::function<bool(double, double, double, double, double, double, double, double, const rclcpp::Time &)>;
+  
     /**
      * \brief Constructor
      * Timestamp will get the current time value
@@ -62,21 +64,33 @@ namespace four_wheel_steering_controller
      * \param time Current time
      */
     void init(const rclcpp::Time & time);
-
+    
     /**
      * \brief Updates the odometry class with latest wheels and steerings position
      * \param fl_speed front left wheel vehicle speed [rad/s]
      * \param fr_speed front right wheel vehicle speed [rad/s]
      * \param rl_speed rear left wheel vehicle speed [rad/s]
      * \param rr_speed rear right wheel vehicle speed [rad/s]
-     * \param front_steering  steering position [rad]
-     * \param rear_steering  steering position [rad]
+     * \param fl_steering front left steering position [rad]
+     * \param fr_steering front right steering position [rad]
+     * \param rl_steering rear left steering position [rad]
+     * \param rr_steering rear right steering position [rad]
      * \param time      Current time
      * \return true if the odometry is actually updated
-     */
-    bool update(const double& fl_speed, const double& fr_speed, const double& rl_speed, const double& rr_speed,
-                double front_steering, double rear_steering, const rclcpp::Time &time);
+     */     
+    UpdateFunction update;
+    
+    // all-四舵轮(全)
+    bool update_all(double fl_speed, double fr_speed, double rl_speed, double rr_speed, double fl_steering, double fr_steering, double rl_steering, double rr_steering, const rclcpp::Time &time);
+    
+    // flrr-四舵轮(前左fl,后右rr)
+    bool update_flrr(double fl_speed, double fr_speed, double rl_speed, double rr_speed, double fl_steering, double fr_steering, double rl_steering, double rr_steering, const rclcpp::Time &time);
+    
+    // frrl-四舵轮(前右fr,后左rl)
+    bool update_frrl(double fl_speed, double fr_speed, double rl_speed, double rr_speed, double fl_steering, double fr_steering, double rl_steering, double rr_steering, const rclcpp::Time &time);
 
+    void setUpdateFunction(std::string chassis_type);
+    
     /**
      * \brief heading getter
      * \return heading [rad]
@@ -251,6 +265,7 @@ namespace four_wheel_steering_controller
     RollingMeanAccumulator rear_steer_vel_acc_;
     double linear_vel_prev_, linear_accel_prev_;
     double front_steer_vel_prev_, rear_steer_vel_prev_;
+    
   };
 } // namespace four_wheel_steering_controller
 

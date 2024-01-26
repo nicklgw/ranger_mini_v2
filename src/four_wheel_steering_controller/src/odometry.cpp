@@ -33,11 +33,23 @@
  *********************************************************************/
 
 #include "four_wheel_steering_controller/odometry.hpp"
+#include <iostream>
 
 namespace four_wheel_steering_controller
 {
+  using std::placeholders::_1;
+  using std::placeholders::_2;
+  using std::placeholders::_3;
+  using std::placeholders::_4;
+  using std::placeholders::_5;
+  using std::placeholders::_6;
+  using std::placeholders::_7;
+  using std::placeholders::_8;
+  using std::placeholders::_9;
+
   Odometry::Odometry(size_t velocity_rolling_window_size)
-  : last_update_timestamp_(0.0)
+  : update(std::bind(&Odometry::update_all, this, _1, _2, _3, _4, _5, _6, _7, _8, _9))
+  , last_update_timestamp_(0.0)
   , x_(0.0)
   , y_(0.0)
   , heading_(0.0)
@@ -64,11 +76,24 @@ namespace four_wheel_steering_controller
     resetAccumulators();
     last_update_timestamp_ = time;
   }
-
-  bool Odometry::update(const double &fl_speed, const double &fr_speed,
-                        const double &rl_speed, const double &rr_speed,
-                        double front_steering, double rear_steering, const rclcpp::Time &time)
+  
+  // all-四舵轮(全)
+  bool Odometry::update_all(double fl_speed, double fr_speed, double rl_speed, double rr_speed, double fl_steering, double fr_steering, double rl_steering, double rr_steering, const rclcpp::Time &time)
   {
+    std::cout << "update_all" << std::endl;
+  
+    double front_steering = 0.0;
+    if(fabs(fl_steering) > 0.001 || fabs(fr_steering) > 0.001)
+    {
+      front_steering = atan(2*tan(fl_steering)*tan(fr_steering)/(tan(fl_steering) + tan(fr_steering)));
+    }
+    
+    double rear_steering = 0.0;
+    if(fabs(rl_steering) > 0.001 || fabs(rr_steering) > 0.001)
+    {
+      rear_steering = atan(2*tan(rl_steering)*tan(rr_steering)/(tan(rl_steering) + tan(rr_steering)));
+    }  
+    
     const double front_tmp = cos(front_steering)*(tan(front_steering)-tan(rear_steering))/wheel_base_;
     const double front_left_tmp = front_tmp/sqrt(1-steering_track_*front_tmp*cos(front_steering)
                                                +pow(steering_track_*front_tmp/2,2));
@@ -128,9 +153,40 @@ namespace four_wheel_steering_controller
     front_steer_vel_prev_ = front_steering;
     rear_steer_vel_acc_.accumulate((rear_steer_vel_prev_ - rear_steering)/dt);
     rear_steer_vel_prev_ = rear_steering;
+    
     return true;
   }
-
+  
+  // flrr-四舵轮(前左fl,后右rr)
+  bool Odometry::update_flrr(double fl_speed, double fr_speed, double rl_speed, double rr_speed, double fl_steering, double fr_steering, double rl_steering, double rr_steering, const rclcpp::Time &time)
+  {
+    
+    return true;
+  }
+  
+  // frrl-四舵轮(前右fr,后左rl)
+  bool Odometry::update_frrl(double fl_speed, double fr_speed, double rl_speed, double rr_speed, double fl_steering, double fr_steering, double rl_steering, double rr_steering, const rclcpp::Time &time)
+  {
+    
+    return true;
+  }
+  
+  void Odometry::setUpdateFunction(std::string chassis_type)
+  {
+    if (chassis_type == "flrr") // flrr-四舵轮(前左fl,后右rr)
+    {
+      update = std::bind(&Odometry::update_flrr, this, _1, _2, _3, _4, _5, _6, _7, _8, _9);
+    }
+    else if (chassis_type == "frrl") // frrl-四舵轮(前右fr,后左rl)
+    {
+      update = std::bind(&Odometry::update_frrl, this, _1, _2, _3, _4, _5, _6, _7, _8, _9);
+    }
+    else // all-四舵轮(全)
+    {
+      update = std::bind(&Odometry::update_all, this, _1, _2, _3, _4, _5, _6, _7, _8, _9);
+    }
+  }
+  
   void Odometry::setWheelParams(double steering_track, double wheel_steering_y_offset, double wheel_radius, double wheel_base)
   {
     steering_track_   = steering_track;

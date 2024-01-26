@@ -151,6 +151,7 @@ CallbackReturn FourWheelSteeringController::on_init()
     auto_declare<std::string>("front_right_steering", "fr_steering_joint");
     auto_declare<std::string>("rear_left_steering", "rl_steering_joint");
     auto_declare<std::string>("rear_right_steering", "rr_steering_joint");
+    auto_declare<std::string>("chassis_type", "all");
 
     auto_declare<double>("track", 0.5);
     auto_declare<double>("wheel_radius", 0.5);
@@ -206,7 +207,8 @@ CallbackReturn FourWheelSteeringController::on_configure(const rclcpp_lifecycle:
   front_right_steering_ = get_node()->get_parameter("front_right_steering").as_string();
   rear_left_steering_ = get_node()->get_parameter("rear_left_steering").as_string();
   rear_right_steering_ = get_node()->get_parameter("rear_right_steering").as_string();
-
+  chassis_type_ = get_node()->get_parameter("chassis_type").as_string();
+  
   track_ = get_node()->get_parameter("track").as_double();
   wheel_radius_ = get_node()->get_parameter("wheel_radius").as_double();
   wheel_base_ = get_node()->get_parameter("wheel_base").as_double();
@@ -228,6 +230,7 @@ CallbackReturn FourWheelSteeringController::on_configure(const rclcpp_lifecycle:
 
   odometry_.setVelocityRollingWindowSize(get_node()->get_parameter("velocity_rolling_window_size").as_int());
   odometry_.setWheelParams(track_-2*wheel_steering_y_offset_, wheel_steering_y_offset_, wheel_radius_, wheel_base_);
+  odometry_.setUpdateFunction(chassis_type_);
 
   last1_cmd_ = std::make_shared<CommandTwist>();
   last1_cmd_->stamp = get_node()->get_clock()->now();
@@ -547,22 +550,8 @@ controller_interface::return_type FourWheelSteeringController::updateOdometry(co
 
   RCLCPP_INFO(get_node()->get_logger(), "odom fl_steering: %.3f, fr_steering: %.3f, rl_steering: %.3f, rr_steering: %.3f", fl_steering, fr_steering, rl_steering, rr_steering);
 
-  double front_steering_pos = 0.0;
-  if(fabs(fl_steering) > 0.001 || fabs(fr_steering) > 0.001)
-  {
-    front_steering_pos = atan(2*tan(fl_steering)*tan(fr_steering)/(tan(fl_steering) + tan(fr_steering)));
-  }
-  
-  double rear_steering_pos = 0.0;
-  if(fabs(rl_steering) > 0.001 || fabs(rr_steering) > 0.001)
-  {
-    rear_steering_pos = atan(2*tan(rl_steering)*tan(rr_steering)/(tan(rl_steering) + tan(rr_steering)));
-  }  
-
-  RCLCPP_INFO(get_node()->get_logger(), "odom front_steering_pos: %.3f, rear_steering_pos: %.3f, diff: %.3f", front_steering_pos, rear_steering_pos, front_steering_pos-rear_steering_pos);
-
   // Estimate linear and angular velocity using joint information
-  odometry_.update(fl_speed, fr_speed, rl_speed, rr_speed, front_steering_pos, rear_steering_pos, time);
+  odometry_.update(fl_speed, fr_speed, rl_speed, rr_speed, fl_steering, fr_steering, rl_steering, rr_steering, time);
 
   tf2::Quaternion orientation;
   orientation.setRPY(0.0, 0.0, odometry_.getHeading());

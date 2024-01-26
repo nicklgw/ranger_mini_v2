@@ -110,6 +110,7 @@ protected:
   std::string front_right_steering_;
   std::string rear_left_steering_;
   std::string rear_right_steering_;
+  std::string chassis_type_;
 
   /// Velocity command related:
   struct CommandTwist
