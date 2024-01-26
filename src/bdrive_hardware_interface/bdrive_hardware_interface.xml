@@ -1,0 +1,9 @@
+<library path="bdrive_hardware_interface">
+  <class name="bdrive_hardware_interface/BDriveHardwareInterface"
+         type="bdrive_hardware_interface::BDriveHardwareInterface"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      bdrive plugin for ros2_control.
+    </description>
+  </class>
+</library>

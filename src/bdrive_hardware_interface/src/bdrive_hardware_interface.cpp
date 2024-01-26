@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "four_wheel_steering_hardware_interface/four_wheel_steering_hardware_interface.hpp"
-#include "four_wheel_steering_hardware_interface/four_wheel_steering_drive_helper.h"
+#include "bdrive_hardware_interface/bdrive_hardware_interface.hpp"
+#include "bdrive_hardware_interface/bdrive_helper.h"
 
 // 0,虚拟机; 1,实体机
 #define PHYSICAL_MACHINE 0
 
-namespace four_wheel_steering_hardware_interface
+namespace bdrive_hardware_interface
 {
-hardware_interface::CallbackReturn FourWheelSteeringHardwareInterface::on_init(const hardware_interface::HardwareInfo & info)
+hardware_interface::CallbackReturn BDriveHardwareInterface::on_init(const hardware_interface::HardwareInfo & info)
 {
   if (hardware_interface::SystemInterface::on_init(info) != hardware_interface::CallbackReturn::SUCCESS) 
   {
@@ -42,16 +42,16 @@ hardware_interface::CallbackReturn FourWheelSteeringHardwareInterface::on_init(c
   control_level_.resize(info_.joints.size(), integration_level_t::UNDEFINED);
 
 #if PHYSICAL_MACHINE
-  int ret = FourWheelSteeringDriveHelper::Init();
-  RCLCPP_INFO(rclcpp::get_logger("FourWheelSteeringHardware"), "FourWheelSteeringDriveHelper::Init(): %d", ret);
+  int ret = BDriveHelper::Init();
+  RCLCPP_INFO(rclcpp::get_logger("FourWheelSteeringHardware"), "BDriveHelper::Init(): %d", ret);
 #else  
-  RCLCPP_INFO(rclcpp::get_logger("FourWheelSteeringHardware"), "FourWheelSteeringDriveHelper::Init()");
+  RCLCPP_INFO(rclcpp::get_logger("FourWheelSteeringHardware"), "BDriveHelper::Init()");
 #endif
 
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn FourWheelSteeringHardwareInterface::on_activate(const rclcpp_lifecycle::State &)
+hardware_interface::CallbackReturn BDriveHardwareInterface::on_activate(const rclcpp_lifecycle::State &)
 {
   for (size_t i = 0; i < info_.joints.size(); i++)
   {
@@ -66,17 +66,17 @@ hardware_interface::CallbackReturn FourWheelSteeringHardwareInterface::on_activa
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn FourWheelSteeringHardwareInterface::on_deactivate(const rclcpp_lifecycle::State &)
+hardware_interface::CallbackReturn BDriveHardwareInterface::on_deactivate(const rclcpp_lifecycle::State &)
 {
 #if PHYSICAL_MACHINE
-  FourWheelSteeringDriveHelper::Exit();
-  RCLCPP_INFO(rclcpp::get_logger("FourWheelSteeringHardware"), "FourWheelSteeringDriveHelper::Exit()");
+  BDriveHelper::Exit();
+  RCLCPP_INFO(rclcpp::get_logger("BDriveHelper"), "BDriveHelper::Exit()");
 #endif
 
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-std::vector<hardware_interface::StateInterface> FourWheelSteeringHardwareInterface::export_state_interfaces()
+std::vector<hardware_interface::StateInterface> BDriveHardwareInterface::export_state_interfaces()
 {
   std::vector<hardware_interface::StateInterface> state_interfaces;
 
@@ -93,7 +93,7 @@ std::vector<hardware_interface::StateInterface> FourWheelSteeringHardwareInterfa
   return state_interfaces;
 }
 
-std::vector<hardware_interface::CommandInterface> FourWheelSteeringHardwareInterface::export_command_interfaces()
+std::vector<hardware_interface::CommandInterface> BDriveHardwareInterface::export_command_interfaces()
 {
   std::vector<hardware_interface::CommandInterface> command_interfaces;
   for (size_t i = 0; i < info_.joints.size(); i++) 
@@ -109,7 +109,7 @@ std::vector<hardware_interface::CommandInterface> FourWheelSteeringHardwareInter
   return command_interfaces;
 }
 
-hardware_interface::return_type FourWheelSteeringHardwareInterface::prepare_command_mode_switch(const std::vector<std::string> & start_interfaces, const std::vector<std::string> & stop_interfaces)
+hardware_interface::return_type BDriveHardwareInterface::prepare_command_mode_switch(const std::vector<std::string> & start_interfaces, const std::vector<std::string> & stop_interfaces)
 {
   for (std::string key : stop_interfaces) 
   {
@@ -155,7 +155,7 @@ hardware_interface::return_type FourWheelSteeringHardwareInterface::prepare_comm
   return hardware_interface::return_type::OK;
 }
 
-hardware_interface::return_type FourWheelSteeringHardwareInterface::perform_command_mode_switch(const std::vector<std::string> & /*start_interfaces*/, const std::vector<std::string> & /*stop_interfaces*/) 
+hardware_interface::return_type BDriveHardwareInterface::perform_command_mode_switch(const std::vector<std::string> & /*start_interfaces*/, const std::vector<std::string> & /*stop_interfaces*/) 
 {
   for (size_t i = 0; i < info_.joints.size(); i++) 
   {
@@ -178,13 +178,13 @@ hardware_interface::return_type FourWheelSteeringHardwareInterface::perform_comm
   return hardware_interface::return_type::OK;
 }
 
-hardware_interface::return_type FourWheelSteeringHardwareInterface::read(const rclcpp::Time & time, const rclcpp::Duration & period)
+hardware_interface::return_type BDriveHardwareInterface::read(const rclcpp::Time & /*time*/, const rclcpp::Duration & period)
 {
   for (size_t i = 0; i < info_.joints.size(); i++) 
   {
 #if PHYSICAL_MACHINE
-    hw_velocities_[i] = FourWheelSteeringDriveHelper::GetVelocity(node_id_[i]);
-    hw_positions_[i] = FourWheelSteeringDriveHelper::GetPosition(node_id_[i]);
+    hw_velocities_[i] = BDriveHelper::GetVelocity(node_id_[i]);
+    hw_positions_[i] = BDriveHelper::GetPosition(node_id_[i]);
 #else    
     switch (control_level_[i]) 
     {
@@ -207,11 +207,11 @@ hardware_interface::return_type FourWheelSteeringHardwareInterface::read(const r
   return hardware_interface::return_type::OK;
 }
 
-hardware_interface::return_type FourWheelSteeringHardwareInterface::write(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
+hardware_interface::return_type BDriveHardwareInterface::write(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
   for (size_t i = 0; i < info_.joints.size(); i++) 
   {
-    float input_torque, input_vel, input_pos;
+    float input_torque = 0.0, input_vel = 0.0, input_pos = 0.0;
 
     switch (control_level_[i]) 
     {
@@ -219,7 +219,7 @@ hardware_interface::return_type FourWheelSteeringHardwareInterface::write(const 
         {
           input_pos = hw_commands_positions_[i];
         #if PHYSICAL_MACHINE
-          FourWheelSteeringDriveHelper::SetPosition(node_id_[i], input_pos);
+          BDriveHelper::SetPosition(node_id_[i], input_pos);
         #else
           hw_positions_[i] = hw_commands_positions_[i];
         #endif
@@ -229,7 +229,7 @@ hardware_interface::return_type FourWheelSteeringHardwareInterface::write(const 
         {
           input_vel = hw_commands_velocities_[i];
           #if PHYSICAL_MACHINE
-            FourWheelSteeringDriveHelper::SetVelocity(node_id_[i], input_vel);  // 设置指定轮子角速度，单位rad/s
+            BDriveHelper::SetVelocity(node_id_[i], input_vel);  // 设置指定轮子角速度，单位rad/s
           #else
             hw_velocities_[i] = hw_commands_velocities_[i];
           #endif
@@ -241,12 +241,16 @@ hardware_interface::return_type FourWheelSteeringHardwareInterface::write(const 
       case integration_level_t::UNDEFINED:
         break;
     }
+    
+    RCLCPP_INFO(rclcpp::get_logger("BDriveHardwareInterface"), 
+    "i: %ld, node_id: %d, control_level: %d, input_pos: %.3f, input_vel: %.3f", 
+    i, node_id_[i], static_cast<int32_t>(control_level_[i]), input_pos, input_vel);
   }
 
   return hardware_interface::return_type::OK;
 }
-}  // namespace four_wheel_steering_hardware_interface
+}  // namespace bdrive_hardware_interface
 
 #include "pluginlib/class_list_macros.hpp"
 PLUGINLIB_EXPORT_CLASS(
-  four_wheel_steering_hardware_interface::FourWheelSteeringHardwareInterface, hardware_interface::SystemInterface)
+  bdrive_hardware_interface::BDriveHardwareInterface, hardware_interface::SystemInterface)

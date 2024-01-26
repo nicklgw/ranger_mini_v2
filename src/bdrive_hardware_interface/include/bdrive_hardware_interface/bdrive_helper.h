@@ -1,8 +1,8 @@
 
-#ifndef __FOUR_WHEEL_STEERING_DRIVE_HELPER_H__
-#define __FOUR_WHEEL_STEERING_DRIVE_HELPER_H__
+#ifndef __BDRIVE_HELPER_H__
+#define __BDRIVE_HELPER_H__
 
-namespace FourWheelSteeringDriveHelper
+namespace BDriveHelper
 {
 
 int    Init(); // 电机初始化
@@ -15,4 +15,4 @@ int    SetPosition(int node_id, double pos);  // 设置指定轮子位置, 单�
 
 }
 
-#endif // __FOUR_WHEEL_STEERING_DRIVE_HELPER_H__
+#endif // __BDRIVE_HELPER_H__

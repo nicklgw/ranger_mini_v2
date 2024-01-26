@@ -12,52 +12,52 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FOUR_WHEEL_STEERING_HARDWARE_INTERFACE_HPP_
-#define FOUR_WHEEL_STEERING_HARDWARE_INTERFACE_HPP_
+#ifndef BDRIVE_HARDWARE_INTERFACE_HPP_
+#define BDRIVE_HARDWARE_INTERFACE_HPP_
 
 #include <cmath>
 
-#include "hardware_interface/system_interface.hpp"
-#include "hardware_interface/types/hardware_interface_type_values.hpp"
-#include "four_wheel_steering_hardware_interface/visibility_control.hpp"
-#include "rclcpp/rclcpp.hpp"
+#include <hardware_interface/system_interface.hpp>
+#include <hardware_interface/types/hardware_interface_type_values.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include "bdrive_hardware_interface/visibility_control.hpp"
 
-namespace four_wheel_steering_hardware_interface
+namespace bdrive_hardware_interface
 {
-class FourWheelSteeringHardwareInterface : public hardware_interface::SystemInterface
+class BDriveHardwareInterface : public hardware_interface::SystemInterface
 {
 public:
-  RCLCPP_SHARED_PTR_DEFINITIONS(FourWheelSteeringHardwareInterface)
+  RCLCPP_SHARED_PTR_DEFINITIONS(BDriveHardwareInterface)
 
-  FOUR_WHEEL_STEERING_HARDWARE_INTERFACE_PUBLIC
+  BDRIVE_HARDWARE_INTERFACE_PUBLIC
   hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareInfo & info) override;
 
-  FOUR_WHEEL_STEERING_HARDWARE_INTERFACE_PUBLIC
+  BDRIVE_HARDWARE_INTERFACE_PUBLIC
   hardware_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State &) override;
 
-  FOUR_WHEEL_STEERING_HARDWARE_INTERFACE_PUBLIC
+  BDRIVE_HARDWARE_INTERFACE_PUBLIC
   hardware_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State &) override;
 
-  FOUR_WHEEL_STEERING_HARDWARE_INTERFACE_PUBLIC
+  BDRIVE_HARDWARE_INTERFACE_PUBLIC
   std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
 
-  FOUR_WHEEL_STEERING_HARDWARE_INTERFACE_PUBLIC
+  BDRIVE_HARDWARE_INTERFACE_PUBLIC
   std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
 
-  FOUR_WHEEL_STEERING_HARDWARE_INTERFACE_PUBLIC
+  BDRIVE_HARDWARE_INTERFACE_PUBLIC
   hardware_interface::return_type prepare_command_mode_switch(const std::vector<std::string> & start_interfaces, const std::vector<std::string> & stop_interfaces) override;
 
-  FOUR_WHEEL_STEERING_HARDWARE_INTERFACE_PUBLIC
+  BDRIVE_HARDWARE_INTERFACE_PUBLIC
   hardware_interface::return_type perform_command_mode_switch(const std::vector<std::string> & start_interfaces, const std::vector<std::string> & stop_interfaces) override;
 
-  FOUR_WHEEL_STEERING_HARDWARE_INTERFACE_PUBLIC
+  BDRIVE_HARDWARE_INTERFACE_PUBLIC
   hardware_interface::return_type read(const rclcpp::Time &, const rclcpp::Duration &) override;
 
-  FOUR_WHEEL_STEERING_HARDWARE_INTERFACE_PUBLIC
+  BDRIVE_HARDWARE_INTERFACE_PUBLIC
   hardware_interface::return_type write(const rclcpp::Time &, const rclcpp::Duration &) override;
-  
+
 private:
-  
+
   std::vector<int> node_id_;
 
   std::vector<double> hw_commands_positions_;
@@ -77,7 +77,6 @@ private:
   
   std::vector<integration_level_t> control_level_;
 };
-}  // namespace four_wheel_steering_hardware_interface
+}  // namespace bdrive_hardware_interface
 
-#endif  // FOUR_WHEEL_STEERING_HARDWARE_INTERFACE_HPP_
-
+#endif  // BDRIVE_HARDWARE_INTERFACE_HPP_

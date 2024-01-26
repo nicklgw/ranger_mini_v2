@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(four_wheel_steering_hardware_interface)
+project(bdrive_hardware_interface)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -27,11 +27,11 @@ link_libraries(${motor-driver_LIBRARIES})
 
 ament_auto_add_library(
   ${PROJECT_NAME} SHARED
-  src/four_wheel_steering_hardware_interface.cpp
-  src/four_wheel_steering_drive_helper.cpp
+  src/bdrive_hardware_interface.cpp
+  src/bdrive_helper.cpp
 )
 
-pluginlib_export_plugin_description_file(hardware_interface four_wheel_steering_hardware_interface.xml)
+pluginlib_export_plugin_description_file(hardware_interface bdrive_hardware_interface.xml)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -43,5 +43,10 @@ if(BUILD_TESTING)
   #set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
+
+install(TARGETS ${PROJECT_NAME} 
+  RUNTIME DESTINATION bin
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib )
 
 ament_auto_package()

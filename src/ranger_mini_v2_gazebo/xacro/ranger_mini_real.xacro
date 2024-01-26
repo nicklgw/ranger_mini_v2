@@ -295,7 +295,7 @@
 
     <ros2_control name="four_wheel_steering_ros2_control" type="system">
         <hardware>
-            <plugin>four_wheel_steering_hardware_interface/FourWheelSteeringHardwareInterface</plugin>
+            <plugin>bdrive_hardware_interface/BDriveHardwareInterface</plugin>
         </hardware>
 
         <joint name="fl_wheel">

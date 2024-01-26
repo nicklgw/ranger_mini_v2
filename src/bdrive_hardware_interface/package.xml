@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>four_wheel_steering_hardware_interface</name>
-  <version>0.1.0</version>
-  <description>four wheel steering hardware interface</description>
+  <name>bdrive_hardware_interface</name>
+  <version>1.0.0</version>
+  <description>BDrive hardware interface</description>
   <maintainer email="yuanborong@hotmail.com">Borong Yuan</maintainer>
   <license>Apache-2.0</license>
 
