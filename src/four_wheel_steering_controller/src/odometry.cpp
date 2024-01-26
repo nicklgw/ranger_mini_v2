@@ -158,15 +158,96 @@ namespace four_wheel_steering_controller
   }
   
   // flrr-四舵轮(前左fl,后右rr)
-  bool Odometry::update_flrr(double fl_speed, double fr_speed, double rl_speed, double rr_speed, double fl_steering, double fr_steering, double rl_steering, double rr_steering, const rclcpp::Time &time)
+  bool Odometry::update_flrr(double fl_speed, double /*fr_speed*/, double /*rl_speed*/, double rr_speed, double fl_steering, double /*fr_steering*/, double /*rl_steering*/, double rr_steering, const rclcpp::Time &time)
   {
+    // 前左fl    fl_speed, fl_steering
+    // 后右rr    rr_speed, rr_steering
+    fl_speed = fl_speed * wheel_radius_; // 轮子转速转化为线速度
+    rr_speed = rr_speed * wheel_radius_;
+
+    // 将行进轮的速度分解到两个对角线轮子的连线上parallel及其垂直方向perpendicular
+    double Vfr_parallel = fl_speed * cos(fl_steering-diagonal_angle_);
+    double Vfr_perpendicular = fl_speed * sin(fl_steering-diagonal_angle_);
+    double Vrl_parallel = rr_speed * cos(rr_steering-diagonal_angle_);
+    double Vrl_perpendicular = rr_speed * sin(rr_steering-diagonal_angle_);
+
+    // 对角线中心点c的速度(Vc_parallel,Vc_perpendicular,Wc)
+    double Vc_parallel = (Vfr_parallel + Vrl_parallel) / 2.0;
+    double Vc_perpendicular = (Vfr_perpendicular + Vrl_perpendicular) / 2.0;
+    double Wc = (Vfr_perpendicular - Vrl_perpendicular) / diagonal_distance_;
     
+    // 速度转换到车体坐标系下 (linear_x_, linear_y_, angular_)
+    linear_x_ = Vc_parallel * cos(diagonal_angle_) - Vc_perpendicular * sin(diagonal_angle_);
+    linear_y_ = Vc_parallel * sin(diagonal_angle_) + Vc_perpendicular * cos(diagonal_angle_);
+    angular_ = Wc;
+    linear_ =  copysign(1.0, rr_speed)*sqrt(pow(linear_x_,2)+pow(linear_y_,2));
+
+    /// Compute x, y and heading using velocity
+    const double dt = (time - last_update_timestamp_).seconds(); 
+    if (dt < 0.0001)
+      return false; // Interval too small to integrate with
+    
+    last_update_timestamp_ = time;
+    
+    /// Integrate odometry:
+    integrateXY(linear_x_*dt, linear_y_*dt, angular_*dt, false);
+    
+    linear_accel_acc_.accumulate((linear_vel_prev_ - linear_)/dt);
+    linear_vel_prev_ = linear_;
+    linear_jerk_acc_.accumulate((linear_accel_prev_ - linear_accel_acc_.getRollingMean())/dt);
+    linear_accel_prev_ = linear_accel_acc_.getRollingMean();
+    front_steer_vel_acc_.accumulate((front_steer_vel_prev_ - fl_steering)/dt);
+    front_steer_vel_prev_ = fl_steering;
+    rear_steer_vel_acc_.accumulate((rear_steer_vel_prev_ - rr_steering)/dt);
+    rear_steer_vel_prev_ = rr_steering;
+
     return true;
   }
   
   // frrl-四舵轮(前右fr,后左rl)
-  bool Odometry::update_frrl(double fl_speed, double fr_speed, double rl_speed, double rr_speed, double fl_steering, double fr_steering, double rl_steering, double rr_steering, const rclcpp::Time &time)
+  bool Odometry::update_frrl(double /*fl_speed*/, double fr_speed, double rl_speed, double /*rr_speed*/, double /*fl_steering*/, double fr_steering, double rl_steering, double /*rr_steering*/, const rclcpp::Time &time)
   {
+    // 前右fr    fr_speed, fr_steering
+    // 后左rl    rl_speed, rl_steering
+
+    fr_speed = fr_speed * wheel_radius_; // 轮子转速转化为线速度
+    rl_speed = rl_speed * wheel_radius_;
+    
+    // 将行进轮的速度分解到两个对角线轮子的连线上parallel及其垂直方向perpendicular
+    double Vfr_parallel = fr_speed * cos(fr_steering-diagonal_angle_);
+    double Vfr_perpendicular = fr_speed * sin(fr_steering-diagonal_angle_);
+    double Vrl_parallel = rl_speed * cos(rl_steering-diagonal_angle_);
+    double Vrl_perpendicular = rl_speed * sin(rl_steering-diagonal_angle_);
+    
+    // 对角线中心点c的速度(Vc_parallel,Vc_perpendicular,Wc)
+    double Vc_parallel = (Vfr_parallel + Vrl_parallel) / 2.0;
+    double Vc_perpendicular = (Vfr_perpendicular + Vrl_perpendicular) / 2.0;
+    double Wc = (Vfr_perpendicular - Vrl_perpendicular) / diagonal_distance_;
+    
+    // 速度转换到车体坐标系下 (linear_x_, linear_y_, angular_)
+    linear_x_ = Vc_parallel * cos(diagonal_angle_) - Vc_perpendicular * sin(diagonal_angle_);
+    linear_y_ = Vc_parallel * sin(diagonal_angle_) + Vc_perpendicular * cos(diagonal_angle_);
+    angular_ = Wc;
+    linear_ =  copysign(1.0, rl_speed)*sqrt(pow(linear_x_,2)+pow(linear_y_,2));
+    
+    /// Compute x, y and heading using velocity
+    const double dt = (time - last_update_timestamp_).seconds(); 
+    if (dt < 0.0001)
+      return false; // Interval too small to integrate with
+    
+    last_update_timestamp_ = time;
+    
+    /// Integrate odometry:
+    integrateXY(linear_x_*dt, linear_y_*dt, angular_*dt, false);
+    
+    linear_accel_acc_.accumulate((linear_vel_prev_ - linear_)/dt);
+    linear_vel_prev_ = linear_;
+    linear_jerk_acc_.accumulate((linear_accel_prev_ - linear_accel_acc_.getRollingMean())/dt);
+    linear_accel_prev_ = linear_accel_acc_.getRollingMean();
+    front_steer_vel_acc_.accumulate((front_steer_vel_prev_ - fr_steering)/dt);
+    front_steer_vel_prev_ = fr_steering;
+    rear_steer_vel_acc_.accumulate((rear_steer_vel_prev_ - rl_steering)/dt);
+    rear_steer_vel_prev_ = rl_steering;
     
     return true;
   }
@@ -180,6 +261,7 @@ namespace four_wheel_steering_controller
     else if (chassis_type == "frrl") // frrl-四舵轮(前右fr,后左rl)
     {
       update = std::bind(&Odometry::update_frrl, this, _1, _2, _3, _4, _5, _6, _7, _8, _9);
+      diagonal_angle_ *= -1.0; // 符号取反
     }
     else // all-四舵轮(全)
     {
@@ -193,6 +275,9 @@ namespace four_wheel_steering_controller
     wheel_steering_y_offset_ = wheel_steering_y_offset;
     wheel_radius_     = wheel_radius;
     wheel_base_       = wheel_base;
+    
+    diagonal_angle_ = atan2(steering_track_, wheel_base_);
+    diagonal_distance_ = hypot(steering_track_, wheel_base_);
   }
 
   void Odometry::setVelocityRollingWindowSize(size_t velocity_rolling_window_size)

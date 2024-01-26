@@ -253,7 +253,9 @@ namespace four_wheel_steering_controller
     double wheel_steering_y_offset_;
     double wheel_radius_;
     double wheel_base_;
-
+    double diagonal_angle_; // 舵轮斜对角角度
+    double diagonal_distance_; // 舵轮斜对角距离
+    
     /// Previous wheel position/state [rad]:
     double wheel_old_pos_;
 
