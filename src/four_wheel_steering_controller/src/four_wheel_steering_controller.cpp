@@ -141,6 +141,7 @@ CallbackReturn FourWheelSteeringController::on_init()
     auto_declare<std::string>("base_frame_id", "base_footprint");
     auto_declare<bool>("enable_odom_tf", true);
     auto_declare<bool>("wait_for_angle", true);
+    auto_declare<bool>("stop_no_adjust_steering", true);
     auto_declare<double>("min_steering_diff", 0.05);
 
     auto_declare<std::string>("front_left_wheel", "fl_wheel_joint");
@@ -193,7 +194,8 @@ CallbackReturn FourWheelSteeringController::on_configure(const rclcpp_lifecycle:
 
   open_loop_ = get_node()->get_parameter("open_loop").as_bool();
   enable_odom_tf_ = get_node()->get_parameter("enable_odom_tf").as_bool();  
-  wait_for_angle_ = get_node()->get_parameter("wait_for_angle").as_bool();  
+  wait_for_angle_ = get_node()->get_parameter("wait_for_angle").as_bool();
+  stop_no_adjust_steering_ = get_node()->get_parameter("stop_no_adjust_steering").as_bool();
   min_steering_diff_ = get_node()->get_parameter("min_steering_diff").as_double();
   cmd_vel_timeout_ = get_node()->get_parameter("cmd_vel_timeout").as_double();
   odom_frame_id_ = get_node()->get_parameter("odom_frame_id").as_string();
@@ -639,6 +641,8 @@ controller_interface::return_type FourWheelSteeringController::updateCommand(con
   double front_left_steering = 0, front_right_steering = 0;
   double rear_left_steering = 0, rear_right_steering = 0;
   
+  bool stop_cmd = false;
+  
   {
     // Limit velocities and accelerations:
     limiter_lin_.limit(curr_cmd_twist->lin_x, last0_cmd_->lin_x, last1_cmd_->lin_x, cmd_dt);
@@ -660,6 +664,8 @@ controller_interface::return_type FourWheelSteeringController::updateCommand(con
   		front_right_steering = 0.0;
   		rear_left_steering = 0.0;
   		rear_right_steering = 0.0;
+
+      stop_cmd = true;
   	}
     // 横移 In-phase // All-Wheel Driving (crab motion)  螃蟹横着走
   	else if (fabs(curr_cmd_twist->ang) < POSITIVE_ZERO)
@@ -742,11 +748,18 @@ controller_interface::return_type FourWheelSteeringController::updateCommand(con
   rear_left_traction_handle_->velocity_command.get().set_value(vel_left_rear);
   rear_right_traction_handle_->velocity_command.get().set_value(vel_right_rear);
   
-  front_left_steering_handle_->position_command.get().set_value(front_left_steering);
-  front_right_steering_handle_->position_command.get().set_value(front_right_steering);
-  rear_left_steering_handle_->position_command.get().set_value(rear_left_steering);
-  rear_right_steering_handle_->position_command.get().set_value(rear_right_steering);
-  
+  if (stop_no_adjust_steering_ && stop_cmd)
+  {
+    RCLCPP_INFO(get_node()->get_logger(), "Receive a stop cmd without adjusting the steering wheel. stop_no_adjust_steering_: %d, stop_cmd: %d", stop_no_adjust_steering_, stop_cmd);
+  }
+  else  
+  {
+    front_left_steering_handle_->position_command.get().set_value(front_left_steering);
+    front_right_steering_handle_->position_command.get().set_value(front_right_steering);
+    rear_left_steering_handle_->position_command.get().set_value(rear_left_steering);
+    rear_right_steering_handle_->position_command.get().set_value(rear_right_steering);
+  }
+
   return controller_interface::return_type::OK;
 }
 

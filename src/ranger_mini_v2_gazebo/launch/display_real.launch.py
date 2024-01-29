@@ -52,7 +52,7 @@ def generate_launch_description():
         [
             FindPackageShare("ranger_mini_v2"),
             "config",
-            "controllers.yaml",
+            "controllers_real.yaml",
         ]
     )
     rviz_config_file = PathJoinSubstitution(

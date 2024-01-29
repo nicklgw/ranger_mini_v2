@@ -292,7 +292,10 @@ int RIGHT = 1;
 int LEFT = 0;
 
 // 减速比 40:1  电机转40圈，轮子转1圈
-#define REDUCTION_RATIO 40.0
+#define REDUCTION_RATIO 44.03;
+
+const double STEERING_REDUCTION_RATIO = 192.5;
+const double TRACTION_REDUCTION_RATIO = 44.03;
 
 int Init() // 电机初始化
 {
@@ -302,7 +305,7 @@ int Init() // 电机初始化
     sprintf(sg_ini.can_interface, "%s", "can1");
 	
 	sg_ini.node_info[0].motor_type = MOTOR_TYPE_KINCO;
-    sg_ini.node_info[0].node_id = 2;
+    sg_ini.node_info[0].node_id = 1;
     sg_ini.node_info[0].operation_mode = 1;
     sg_ini.node_info[0].profile_acc = 100;
     sg_ini.node_info[0].profile_dec = 100;
@@ -333,7 +336,7 @@ int Init() // 电机初始化
     sg_ini.node_info[2].profile_acc = 100;
     sg_ini.node_info[2].profile_dec = 100;
     sg_ini.node_info[2].max_speed = 3000;
-    sg_ini.node_info[2].install_direction = 1;
+    sg_ini.node_info[2].install_direction = 0;
     sg_ini.node_info[2].home_trigger = 0;
     sg_ini.node_info[2].profile_speed = 3000;
     sg_ini.node_info[2].encoder_dpi = 65536;
@@ -346,7 +349,7 @@ int Init() // 电机初始化
     sg_ini.node_info[3].profile_acc = 100;
     sg_ini.node_info[3].profile_dec = 100;
     sg_ini.node_info[3].max_speed = 3000;
-    sg_ini.node_info[3].install_direction = 1;
+    sg_ini.node_info[3].install_direction = 0;
     sg_ini.node_info[3].home_trigger = 0;
     sg_ini.node_info[3].profile_speed = 3000;
     sg_ini.node_info[3].encoder_dpi = 65536;
@@ -355,30 +358,29 @@ int Init() // 电机初始化
 
     sg_ini.node_info[4].motor_type = MOTOR_TYPE_KINCO;
     sg_ini.node_info[4].node_id = 5;
-    sg_ini.node_info[4].operation_mode = 1;
-    sg_ini.node_info[4].profile_acc = 100;
-    sg_ini.node_info[4].profile_dec = 100;
+    sg_ini.node_info[4].operation_mode = -3;
+    sg_ini.node_info[4].profile_acc = 30;
+    sg_ini.node_info[4].profile_dec = 30;
     sg_ini.node_info[4].max_speed = 3000;
     sg_ini.node_info[4].install_direction = 1;
-    sg_ini.node_info[4].home_trigger = 0;
+    sg_ini.node_info[4].home_trigger = 1;
     sg_ini.node_info[4].profile_speed = 3000;
     sg_ini.node_info[4].encoder_dpi = 65536;
     sg_ini.node_info[4].en_profile_speed = 1;
-    sg_ini.node_info[4].reduction_ratio = 192.5;
+    sg_ini.node_info[4].reduction_ratio = 44.03;
 
     sg_ini.node_info[5].motor_type = MOTOR_TYPE_KINCO;
     sg_ini.node_info[5].node_id = 6;
-    sg_ini.node_info[5].operation_mode = 1;
-    sg_ini.node_info[5].profile_acc = 100;
-    sg_ini.node_info[5].profile_dec = 100;
+    sg_ini.node_info[5].operation_mode = -3;
+    sg_ini.node_info[5].profile_acc = 30;
+    sg_ini.node_info[5].profile_dec = 30;
     sg_ini.node_info[5].max_speed = 3000;
-    sg_ini.node_info[5].install_direction = 1;
+    sg_ini.node_info[5].install_direction = 0;
     sg_ini.node_info[5].home_trigger = 0;
     sg_ini.node_info[5].profile_speed = 3000;
     sg_ini.node_info[5].encoder_dpi = 65536;
     sg_ini.node_info[5].en_profile_speed = 1;
-    sg_ini.node_info[5].reduction_ratio = 192.5;
-
+    sg_ini.node_info[5].reduction_ratio = 44.03;
     motors_info.motor[0].node_id = sg_ini.node_info[0].node_id;
     motors_info.motor[1].node_id = sg_ini.node_info[1].node_id;
     motors_info.motor[2].node_id = sg_ini.node_info[2].node_id;
@@ -407,7 +409,7 @@ double GetVelocity(int node_id) // 获取指定轮子角速度, 单位rad/s
 	double motor_rpm = motor_info[index].speed;
 	
 	double motor_vel = motor_rpm * M_PI / 30;
-	double wheel_vel = motor_vel / REDUCTION_RATIO;
+	double wheel_vel = motor_vel / TRACTION_REDUCTION_RATIO;
 
     log_func(LOG_LEVEL_INFO, "<%s,%d> GetVelocity index:%d, motor_rpm: %f, motor_vel: %f, wheel_vel: %f", __func__, __LINE__, index, motor_rpm, motor_vel, wheel_vel);
 	
@@ -420,7 +422,7 @@ int SetVelocity(int node_id, double wheel_vel) // 设置指定轮子角速度，
 	if (index < 0)
 		return -1;
 
-	double motor_vel = wheel_vel * REDUCTION_RATIO;
+	double motor_vel = wheel_vel * TRACTION_REDUCTION_RATIO;
 	double motor_rpm = motor_vel * 30 / M_PI;	
 	
     log_func(LOG_LEVEL_INFO, "<%s,%d> SetVelocity node_id: %d, motor_rpm: %f, motor_vel: %f, wheel_vel: %f", __func__, __LINE__, node_id, motor_rpm, motor_vel, wheel_vel);
@@ -435,9 +437,9 @@ double GetPosition(int node_id) // 获取指定轮子位置, 单位rad
 	int index = getIndexFromNodeId(node_id, motor_info);
 	if (index < 0)
 		return 0.0;
-
+	
 	double motor_position = motor_info[index].position;
-	double wheel_cycles = motor_position  / 10000.0 / REDUCTION_RATIO; // 转了多少圈
+	double wheel_cycles = motor_position  / 65536.0 / STEERING_REDUCTION_RATIO; // 转了多少圈
 	double wheel_position = wheel_cycles * 2 * M_PI; // 单位rad
 	
 	return wheel_position;
@@ -448,8 +450,9 @@ int SetPosition(int node_id, double pos)  // 设置指定轮子位置, 单位rad
 	int index = getIndexFromNodeId(node_id, motor_info);
 	if (index < 0)
 		return -1;
-
-	double motor_pos = pos * REDUCTION_RATIO; // 电机转过的弧度
+	
+	//double motor_pos = pos * STEERING_REDUCTION_RATIO; // 电机转过的弧度
+	double motor_pos = pos * 1.0; // 电机转过的弧度
 	double motor_degree = motor_pos / M_PI * 180; // 角度转为弧度
 	
 	BzlSetMotorAngle(node_id, motor_degree);
